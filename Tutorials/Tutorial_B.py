@@ -41,8 +41,8 @@ class Window(QtWidgets.QWidget):
         self.button2.clicked.connect(self.button2_click)
 
         # Connect line edit signals and slots
-        self.button3.clicked.connect(self.lineEdit.clear)
-        self.lineEdit.returnPressed.connect(self.le_returnPressed)
+        self.button3.clicked.connect(self.le_submit)
+        self.lineEdit.returnPressed.connect(self.le_submit)
         self.lineEdit.cursorPositionChanged.connect(self.le_cursorChanged)
 
         # display window
@@ -50,12 +50,18 @@ class Window(QtWidgets.QWidget):
 
     def button1_click(self):
         self.label1.setText(str(int(self.label1.text()) - 1))
-    r
+    
     def button2_click(self):
         self.label1.setText(str(int(self.label1.text()) + 1))
 
-    def le_returnPressed(self):
-        self.lineEdit.clear()
+    def le_submit(self):
+        # sender is the origin of the signal
+        sender = self.sender()
+        if (sender.text() == 'OK'):
+            print(self.lineEdit.text())
+        else:
+            self.lineEdit.clear()
+        
     
     def le_cursorChanged(self, old, new):
         self.label1.setText(str(new))

@@ -26,8 +26,8 @@ def window():
     h_box.addWidget(label1)
     h_box.addStretch()
     v_box = QtWidgets.QVBoxLayout()
-    v_box.addWidget(button1)
     v_box.addLayout(h_box)
+    v_box.addWidget(button1)
 
     window.setLayout(v_box)
     window.setWindowTitle("Automark (v0.0)")

@@ -1,5 +1,6 @@
 import sys
 import os
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
 
 class Notepad(QWidget):
@@ -11,6 +12,7 @@ class Notepad(QWidget):
         self.openBtn = QPushButton('Open')
 
         self.init_ui()
+        self.init_saveDialog()
 
     def init_ui(self):
         v_layout = QVBoxLayout()
@@ -30,8 +32,30 @@ class Notepad(QWidget):
 
         # Finalize window
         self.setLayout(v_layout)
-        self.setWindowTitle("Tutorial E")
         self.show()
+
+    def init_saveDialog(self):
+        msg = QLabel("Do you wish to save any unsaved changes?")
+        self.saveDialog = QDialog()
+        self.saveDialog.setWindowTitle('Unsaved changes')
+
+        # dialog buttons
+        acceptBtn = QPushButton('Yes', self.saveDialog)
+        acceptBtn.clicked.connect(self.saveDialog.accept)
+        acceptBtn.setDefault(True)
+        rejectBtn = QPushButton('No', self.saveDialog)
+        rejectBtn.clicked.connect(self.saveDialog.reject)
+
+        # Put UI components into the dialog
+        h_box = QHBoxLayout()
+        h_box.addStretch()
+        h_box.addWidget(acceptBtn)
+        h_box.addWidget(rejectBtn)
+        v_box = QVBoxLayout()
+        v_box.addWidget(msg)
+        v_box.addLayout(h_box)
+
+        self.saveDialog.setLayout(v_box)
 
     def saveText(self):
         # Open QT dialog
@@ -43,6 +67,8 @@ class Notepad(QWidget):
             with open(fname[0], 'w') as f:
                 text = self.textEdit.toPlainText()
                 f.write(text)
+                return True
+        return False
 
     def openText(self):
         fname = QFileDialog.getOpenFileName(
@@ -51,21 +77,31 @@ class Notepad(QWidget):
             with open(fname[0], 'r') as f:
                 text = f.read()
                 self.textEdit.setText(text)
+                return True
+        return False
 
     def clearText(self):
+        if self.saveWarning():
+            if not self.saveText():
+                return False
         self.textEdit.clear()
+
+    def saveWarning(self):
+        """Displays a warning dialog window to ask to save or not"""
+        return self.saveDialog.exec_()
+        
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Using the notepad as the central widget 
+        # Using the notepad as the central widget
         self.notepad = Notepad()
         self.setCentralWidget(self.notepad)
+        self.setWindowTitle("Tutorial E")
 
         self.init_ui()
-        
-        
+
     def init_ui(self):
         # create menu bar
         menuBar = self.menuBar()

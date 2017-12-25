@@ -98,7 +98,7 @@ class MainWindow(QMainWindow):
         # Using the notepad as the central widget
         self.notepad = Notepad()
         self.setCentralWidget(self.notepad)
-        self.setWindowTitle("Tutorial E")
+        self.setWindowTitle("FakeNews")
 
         self.init_ui()
 

@@ -2,10 +2,71 @@ import sys
 import os
 from PyQt5.QtWidgets import *
 
-class MenuDemo(QMainWindow):
+class Notepad(QWidget):
+    def __init__(self):
+        super(Notepad, self).__init__()
+        self.textEdit = QTextEdit(self)
+        self.clearBtn = QPushButton('Clear')
+        self.saveBtn = QPushButton('Save')
+        self.openBtn = QPushButton('Open')
+
+        self.init_ui()
+
+    def init_ui(self):
+        v_layout = QVBoxLayout()
+        h_layout = QHBoxLayout()
+
+        h_layout.addWidget(self.openBtn)
+        h_layout.addWidget(self.saveBtn)
+        h_layout.addWidget(self.clearBtn)
+
+        v_layout.addWidget(self.textEdit)
+        v_layout.addLayout(h_layout)
+
+        # Connect signals to slots
+        self.saveBtn.clicked.connect(self.saveText)
+        self.openBtn.clicked.connect(self.openText)
+        self.clearBtn.clicked.connect(self.clearText)
+
+        # Finalize window
+        self.setLayout(v_layout)
+        self.setWindowTitle("Tutorial E")
+        self.show()
+
+    def saveText(self):
+        # Open QT dialog
+        # with dialog title 'Save file' and at $HOME$ starting directory
+        # File extension specified in the third parameter
+        fname = QFileDialog.getSaveFileName(self, 'Save file', os.getenv(
+            'HOME'), 'Text Files (*.txt)')
+        if fname[0] != '':
+            with open(fname[0], 'w') as f:
+                text = self.textEdit.toPlainText()
+                f.write(text)
+
+    def openText(self):
+        fname = QFileDialog.getOpenFileName(
+            self, 'Open file', os.getenv('HOME'), 'Text Files (*.txt)')
+        if fname[0] != '':
+            with open(fname[0], 'r') as f:
+                text = f.read()
+                self.textEdit.setText(text)
+
+    def clearText(self):
+        self.textEdit.clear()
+
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        # Using the notepad as the central widget 
+        self.notepad = Notepad()
+        self.setCentralWidget(self.notepad)
+
+        self.init_ui()
         
+        
+    def init_ui(self):
         # create menu bar
         menuBar = self.menuBar()
 
@@ -36,52 +97,26 @@ class MenuDemo(QMainWindow):
         menu_edit.addAction(replace_action)
 
         # Bind events from actions signals to slots
-        new_action.triggered.connect(self.new_trigger)
-        open_action.triggered.connect(self.open_trigger)
-        save_action.triggered.connect(self.save_trigger)
-        quit_action.triggered.connect(self.quit_trigger)
+        menu_file.triggered.connect(self.fileMenuHandler)
+        menu_edit.triggered.connect(self.editMenuHandler)
 
-        find_action.triggered.connect(self.unbinded)
-        replace_action.triggered.connect(self.unbinded)
-    
-        # Finalize window
-        self.setWindowTitle('Menu Test')
-        self.resize(600, 400)
         self.show()
 
-    # Slots for menu actions
-    def new_trigger(self):
-        """This should clear everything in the workspace"""
-        # TODO:
-
-    def open_trigger(self):
-        """Opens a dialog to select the file"""
-        fname = QFileDialog.getOpenFileName(self, 'Open file', os.getenv('HOME'), 'Text files (*.txt)')
-        if fname[0] != '':
-            with open(fname[0], 'r') as f:
-                text = f.read()
-                print(text)
-                # TODO: do something with the text
-
-    def save_trigger(self):
-        """Opens a dialog to save the file"""
-        fname = QFileDialog.getSaveFileName(self, 'Open file', os.getenv('HOME'), 'Text files (*.txt)')
-        if fname[0] != '':
-            with open(fname[0], 'w') as f:
-                text = "Lorem ipsum" #TODO:
-                f.write(text)
-                # TODO: do something with the text
-
-    def quit_trigger(self):
-        """Exit the app"""
-        qApp.quit()
-
-    def unbinded(self):
-        """Placeholder for unbinded signals"""
-        print("WIP")
-
+    def fileMenuHandler(self, sender):
+        signal = sender.text()
+        if signal == '&New':
+            self.notepad.clearText()
+        elif signal == '&Open':
+            self.notepad.openText()
+        elif signal == '&Save':
+            self.notepad.saveText()
+        elif signal == '&Quit':
+            qApp.quit()
+    
+    def editMenuHandler(self, sender):
+        print('WIP')
 
 # Run the app
 app = QApplication(sys.argv)
-menus = MenuDemo()
+mainWindow = MainWindow()
 sys.exit(app.exec_())

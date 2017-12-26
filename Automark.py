@@ -65,10 +65,25 @@ class MainWindow(QMainWindow):
         """Setup docking widget that shows all the folders"""
         self.dockFolders = QDockWidget(self)
         self.dockFoldersContent = QWidget()
-        vLayout = QVBoxLayout(self.dockFoldersContent)
-        testLabel = QLabel(self.dockFoldersContent)
-        vLayout.addWidget(testLabel)
+        
+        # Directory indicator at the top
+        cdLabel = QLabel(self.dockFoldersContent)
+        cdLabel.setText('Current Directory')
+        cdURL = QLineEdit(self.dockFoldersContent)
+        cdURL.setReadOnly(True)
+        cdContainer = QHBoxLayout()
+        cdContainer.addWidget(cdLabel)
+        cdContainer.addWidget(cdURL)
 
+        # List view
+        foldersList = QListView(self.dockFoldersContent)
+
+        # Add everything together in a vertical layout
+        vLayout = QVBoxLayout(self.dockFoldersContent)
+        vLayout.addLayout(cdContainer)
+        vLayout.addWidget(foldersList)
+
+        # Add dock widget to main window
         self.dockFolders.setWidget(self.dockFoldersContent)
         self.dockFolders.setWindowTitle('Folders')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFolders)

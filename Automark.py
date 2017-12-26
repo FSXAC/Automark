@@ -60,6 +60,7 @@ class MainWindow(QMainWindow):
     def setupDocks(self):
         """Setup dockable widgets"""
         self.setupDockFolders()
+        self.setupDockFiles()
 
     def setupDockFolders(self):
         """Setup docking widget that shows all the folders"""
@@ -87,6 +88,21 @@ class MainWindow(QMainWindow):
         self.dockFolders.setWidget(self.dockFoldersContent)
         self.dockFolders.setWindowTitle('Folders')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFolders)
+
+    def setupDockFiles(self):
+        """Setup dokcing widget that shows files in the folder selected"""
+        self.dockFiles = QDockWidget(self)
+        self.dockFilesContents = QWidget()
+
+        # List view
+        filesList = QListView(self.dockFilesContents)
+
+        # Add to layout
+        layout = QVBoxLayout(self.dockFilesContents)
+        layout.addWidget(filesList)
+        self.dockFiles.setWidget(self.dockFilesContents)
+        self.dockFiles.setWindowTitle('Files')
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFiles)
 
     def menuFileHandler(self, sender):
         """Handles events of menu items being clicked on"""

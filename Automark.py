@@ -1,23 +1,21 @@
+"""This is an auto grader program hopefully by used for APSC 160"""
+
 import sys
 import os
-# from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 
+# Global constants
 VERSION_NO = 'v0.0a'
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        
-        # Using main automark widget as central widget
-        # self.am = AutomarkWidget()
-        # self.setCentralWidget(self.am)
-
         self.setWindowTitle('Automark ' + VERSION_NO)
         self.setupUi()
 
     def setupUi(self):
+        """Sets up nearly all of the front-end components"""
         # Menu and status bar
         self.menubar = QMenuBar(self)
         self.statusbar = QStatusBar(self)
@@ -32,37 +30,39 @@ class MainWindow(QMainWindow):
         self.toolbar = self.addToolBar('Files')
 
         # Docks
-        # self.dockFolders = QDockWidget(self)
         self.setupDocks()
 
-        # Widgets
+        # Central widget
         self.textedit = QTextEdit()
         self.setCentralWidget(self.textedit)
-
 
         # Window
         self.resize(800, 600)
         self.show()
 
     def setupMenuFile(self, menu):
-        actionOpenFolder = QAction('&Open Folder', self)
-        actionQuit = QAction('&Quit', self)
+        """Setup a particular set of actions and its menus"""
+        self.actionOpenFolder = QAction('&Open Folder', self)
+        self.actionQuit = QAction('&Quit', self)
 
         # Add menu actions to menu
-        menu.addAction(actionOpenFolder)
+        menu.addAction(self.actionOpenFolder)
         menu.addSeparator()
-        menu.addAction(actionQuit)
+        menu.addAction(self.actionQuit)
 
         # Bind signals from actions to slots
         menu.triggered.connect(self.menuFileHandler)
     
     def setupMenuView(self, menu):
+        """Setup view related actions and menu items"""
         menu.triggered.connect(self.menuViewHandler)
 
     def setupDocks(self):
+        """Setup dockable widgets"""
         self.setupDockFolders()
 
     def setupDockFolders(self):
+        """Setup docking widget that shows all the folders"""
         self.dockFolders = QDockWidget(self)
         self.dockFoldersContent = QWidget()
         vLayout = QVBoxLayout(self.dockFoldersContent)
@@ -82,6 +82,7 @@ class MainWindow(QMainWindow):
             qApp.quit()
     
     def menuViewHandler(self, sender):
+        """Handles any event from the view menu actions"""
         print(sender.text())
 
 # Run the app

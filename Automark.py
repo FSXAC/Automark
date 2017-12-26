@@ -16,6 +16,17 @@ class AutomarkWidget(QWidget):
         self.setLayout(h_layout)
         self.show()
 
+    def openFolder(self):
+        """Opens a dialog window to get file directory"""
+        fname = QFileDialog.getExistingDirectory(
+            self, 'Open folder', os.getenv('HOME')
+        )
+
+        #TODO: verify that the folder contains the right stuff
+        #TODO: then populate backend
+
+        return fname
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -23,14 +34,15 @@ class MainWindow(QMainWindow):
         # Using main automark widget as central widget
         self.am = AutomarkWidget()
         self.setCentralWidget(self.am)
+
         self.setWindowTitle('Automark ' + VERSION_NO)
         self.setupUi()
+
 
     def setupUi(self):
         # menuBar = self.menuBar()
         # Make instance of menu and status bar
         menubar = QMenuBar(self)
-        statusbar = QStatusBar(self)
 
         # Add root menus to menubar 
         menuFile = menubar.addMenu('File')
@@ -40,9 +52,8 @@ class MainWindow(QMainWindow):
         self.setupMenuFile(menuFile)
         self.setupMenuEdit(menuEdit)
 
-        # Add menu and status bar to main window
+        # Add menu bar to main window
         self.setMenuBar(menubar)
-        self.setStatusBar(statusbar)
 
         self.resize(600, 400)
         self.show()
@@ -75,11 +86,12 @@ class MainWindow(QMainWindow):
         if signal == '&New':
             print('New handler here')
         elif signal == '&Open folder':
-            print('open folder')
+            directory = self.am.openFolder()
+            print(directory)
         elif signal == '&Save':
             print('save')
         elif signal == '&Quit':
-            qApp.quit()        
+            qApp.quit()
 
 # Run the app
 app = QApplication(sys.argv)

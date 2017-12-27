@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1024</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>1024</width>
      <height>26</height>
     </rect>
    </property>
@@ -41,6 +41,7 @@
     <property name="title">
      <string>View</string>
     </property>
+    <addaction name="actionFolderse"/>
    </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuView"/>
@@ -319,6 +320,17 @@
   <action name="actionText">
    <property name="text">
     <string>Text</string>
+   </property>
+  </action>
+  <action name="actionFolderse">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Folders</string>
    </property>
   </action>
  </widget>

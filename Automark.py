@@ -7,7 +7,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import QIcon
 
 # Global constants
-VERSION_NO = 'v0.0a'
+VERSION_NO = 'v0.0b'
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -46,8 +46,31 @@ class MainWindow(QMainWindow):
 
     def setupActions(self):
         """Creates a bunch of public actions for the app"""
+
+        # File actions
         self.actionOpenFolder = QAction(QIcon('hi.png'), '&Open Folder', self)
-        self.actionQuit = QAction('&Quit', self)
+        self.actionQuit = QAction(QIcon('hi.png'), '&Quit', self)
+
+        # View actions
+        self.actionDockFolders = QAction('Folders', self)
+        self.actionDockFolders.setCheckable(True)
+        self.actionDockFolders.setChecked(True)
+
+        self.actionDockFiles = QAction('Files', self)
+        self.actionDockFiles.setCheckable(True)
+        self.actionDockFiles.setChecked(True)
+
+        self.actionDockSubmission = QAction('Submission', self)
+        self.actionDockSubmission.setCheckable(True)
+        self.actionDockSubmission.setChecked(True)
+
+        self.actionDockOutput = QAction('Output', self)
+        self.actionDockOutput.setCheckable(True)
+        self.actionDockOutput.setChecked(True)
+
+        self.actionDockVerdict = QAction('Verdict', self)
+        self.actionDockVerdict.setCheckable(True)
+        self.actionDockVerdict.setChecked(True)
 
     def setupMenuFile(self, menu):
         """Setup a particular set of actions and its menus"""
@@ -61,11 +84,18 @@ class MainWindow(QMainWindow):
     
     def setupMenuView(self, menu):
         """Setup view related actions and menu items"""
+        menu.addAction(self.actionDockFolders)
+        menu.addAction(self.actionDockFiles)
+        menu.addAction(self.actionDockSubmission)
+        menu.addAction(self.actionDockOutput)
+        menu.addAction(self.actionDockVerdict)
+
         menu.triggered.connect(self.menuViewHandler)
 
     def setupToolbar(self):
         """Setup the tool bar"""
         self.tbFiles = self.addToolBar('Files')
+        self.tbFiles.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.tbFiles.addAction(self.actionOpenFolder)
         self.tbFiles.addAction(self.actionQuit)
 
@@ -104,6 +134,9 @@ class MainWindow(QMainWindow):
         self.dockFolders.setWindowTitle('Folders')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFolders)
 
+        # Connect signals relevant to this dock
+        self.dockFolders.visibilityChanged.connect(lambda x: self.actionDockFolders.setChecked(x))
+
     def setupDockFiles(self):
         """Setup dokcing widget that shows files in the folder selected"""
         self.dockFiles = QDockWidget(self)
@@ -118,6 +151,7 @@ class MainWindow(QMainWindow):
         self.dockFiles.setWidget(self.dockFilesContents)
         self.dockFiles.setWindowTitle('Files')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFiles)
+        self.dockFiles.visibilityChanged.connect(lambda x: self.actionDockFiles.setChecked(x))
 
     def setupDockSubmission(self):
         """Setup dock that shows student information"""
@@ -165,6 +199,7 @@ class MainWindow(QMainWindow):
         self.dockSubmission.setWidget(self.dockSubmissionContents)
         self.dockSubmission.setWindowTitle('Submission')
         self.addDockWidget(Qt.RightDockWidgetArea, self.dockSubmission)
+        self.dockSubmission.visibilityChanged.connect(lambda x: self.actionDockSubmission.setChecked(x))
 
     def setupDockOutput(self):
         self.dockOutput = QDockWidget(self)
@@ -175,6 +210,7 @@ class MainWindow(QMainWindow):
         self.dockOutput.setWidget(self.dockOutputContents)
         self.dockOutput.setWindowTitle('Output')
         self.addDockWidget(Qt.RightDockWidgetArea, self.dockOutput)
+        self.dockOutput.visibilityChanged.connect(lambda x: self.actionDockOutput.setChecked(x))
     
     def setupDockVerdict(self):
         self.dockVerdict = QDockWidget(self)
@@ -204,8 +240,8 @@ class MainWindow(QMainWindow):
         self.dockVerdict.setWidget(self.dockVerdictContent)
         self.dockVerdict.setWindowTitle('Verdict')
         self.addDockWidget(Qt.RightDockWidgetArea, self.dockVerdict)
+        self.dockVerdict.visibilityChanged.connect(lambda x: self.actionDockVerdict.setChecked(x))
 
-        
     def menuFileHandler(self, sender):
         """Handles events of menu items being clicked on"""
         signal = sender.text()
@@ -216,11 +252,28 @@ class MainWindow(QMainWindow):
     
     def menuViewHandler(self, sender):
         """Handles any event from the view menu actions"""
-        print(sender.text())
+        print(sender.text() + ': ' + str(sender.isChecked()))
+        
+        signal = sender.text()
+        vis = sender.isChecked()
+        if signal == 'Folders':
+            self.dockFolders.setVisible(vis)
+        elif signal == 'Files':
+            self.dockFiles.setVisible(vis)
+        elif signal == 'Submission':
+            self.dockSubmission.setVisible(vis)
+        elif signal == 'Output':
+            self.dockOutput.setVisible(vis)
+        elif signal == 'Verdict':
+            self.dockVerdict.setVisible(vis)
 
     def toolbarFileHandler(self, sender):
         """Handles any actions from Files toolbar"""
         # print(sender.text())
+    
+    # def dockVisibilityHandler(self, sender, visibility):
+    #     """Handles docked widget's visibility"""
+    #     print(sender + ' visibility is ' + str(visibility))
 
 # Run the app
 app = QApplication(sys.argv)

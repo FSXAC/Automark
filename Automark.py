@@ -246,7 +246,7 @@ class MainWindow(QMainWindow):
         """Handles events of menu items being clicked on"""
         signal = sender.text()
         if signal == '&Open Folder':
-            print('Open folder handler here')
+            self.openFolder()
         elif signal == '&Quit':
             qApp.quit()
     
@@ -267,13 +267,28 @@ class MainWindow(QMainWindow):
         elif signal == 'Verdict':
             self.dockVerdict.setVisible(vis)
 
-    def toolbarFileHandler(self, sender):
-        """Handles any actions from Files toolbar"""
-        # print(sender.text())
-    
-    # def dockVisibilityHandler(self, sender, visibility):
-    #     """Handles docked widget's visibility"""
-    #     print(sender + ' visibility is ' + str(visibility))
+    def openFolder(self):
+        """Start a marking project"""
+        # Get existing directory
+        fdir = QFileDialog.getExistingDirectory(
+            self, 'Select Folder', os.getenv('HOME'),
+            QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
+        )
+
+        if fdir == '':
+            return
+        
+        # print(fdir)
+        self.statusbar.showMessage('Opened at ' + fdir)
+
+class Validator:
+    """This class is instantiated to check if current directory contains the right files"""
+
+class Project:
+    """This act as backend"""
+    def __init__(self, url):
+        self.rootDir = ''
+
 
 # Run the app
 app = QApplication(sys.argv)

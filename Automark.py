@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.textedit)
 
         # Window
-        self.resize(800, 600)
+        self.resize(1440, 800)
         self.show()
 
     def setupMenuFile(self, menu):
@@ -62,6 +62,8 @@ class MainWindow(QMainWindow):
         self.setupDockFolders()
         self.setupDockFiles()
         self.setupDockSubmission()
+        self.setupDockOutput()
+        self.setupDockVerdict()
 
     def setupDockFolders(self):
         """Setup docking widget that shows all the folders"""
@@ -138,20 +140,60 @@ class MainWindow(QMainWindow):
         layout = QGridLayout(self.dockSubmissionContents)
         layout.addWidget(l_name, 0, 0, 1, 1)
         layout.addWidget(t_name, 0, 1, 1, 1)
-        layout.addWidget(l_email, 1, 0, 1, 1);
-        layout.addWidget(t_email, 1, 1, 1, 1);
-        layout.addWidget(l_id, 2, 0, 1, 1);
-        layout.addWidget(t_id, 2, 1, 1, 1);
-        layout.addWidget(l_csid, 3, 0, 1, 1);
-        layout.addWidget(t_csid, 3, 1, 1, 1);
-        layout.addWidget(l_date, 4, 0, 1, 1);
-        layout.addWidget(t_date, 4, 1, 1, 1);
+        layout.addWidget(l_email, 1, 0, 1, 1)
+        layout.addWidget(t_email, 1, 1, 1, 1)
+        layout.addWidget(l_id, 2, 0, 1, 1)
+        layout.addWidget(t_id, 2, 1, 1, 1)
+        layout.addWidget(l_csid, 3, 0, 1, 1)
+        layout.addWidget(t_csid, 3, 1, 1, 1)
+        layout.addWidget(l_date, 4, 0, 1, 1)
+        layout.addWidget(t_date, 4, 1, 1, 1)
         
         # Add to widget
         self.dockSubmission.setWidget(self.dockSubmissionContents)
         self.dockSubmission.setWindowTitle('Submission')
         self.addDockWidget(Qt.RightDockWidgetArea, self.dockSubmission)
 
+    def setupDockOutput(self):
+        self.dockOutput = QDockWidget(self)
+        self.dockOutputContents = QWidget()
+        text = QPlainTextEdit(self.dockOutputContents)
+        layout = QVBoxLayout(self.dockOutputContents)
+        layout.addWidget(text)
+        self.dockOutput.setWidget(self.dockOutputContents)
+        self.dockOutput.setWindowTitle('Output')
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dockOutput)
+    
+    def setupDockVerdict(self):
+        self.dockVerdict = QDockWidget(self)
+        self.dockVerdictContent = QWidget()
+
+        l_mark = QLabel(self.dockVerdictContent)
+        l_mark.setText('Mark')
+        sl_mark = QSlider(self.dockVerdictContent)
+        sl_mark.setMaximum(5)
+        sl_mark.setOrientation(Qt.Horizontal)
+        sl_mark.setTickPosition(QSlider.TicksBelow)
+        sb_mark = QSpinBox(self.dockVerdictContent)
+        sb_mark.setMinimum(0)
+        sb_mark.setMaximum(5)
+
+        # Connect local signals between the slider and spinbox
+        sl_mark.valueChanged.connect(lambda x: sb_mark.setValue(sl_mark.value()))
+        sb_mark.valueChanged.connect(lambda x: sl_mark.setValue(sb_mark.value()))
+
+        # Put all into grid
+        layout = QGridLayout(self.dockVerdictContent)
+        layout.addWidget(l_mark, 0, 0, 1, 1)
+        layout.addWidget(sl_mark, 0, 1, 1, 1)
+        layout.addWidget(sb_mark, 0, 2, 1, 1)
+
+        # Add to window
+        self.dockVerdict.setWidget(self.dockVerdictContent)
+        self.dockVerdict.setWindowTitle('Verdict')
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dockVerdict)
+
+        
     def menuFileHandler(self, sender):
         """Handles events of menu items being clicked on"""
         signal = sender.text()

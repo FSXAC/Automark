@@ -4,6 +4,7 @@ import sys
 import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtGui import QIcon
 
 # Global constants
 VERSION_NO = 'v0.0a'
@@ -16,6 +17,9 @@ class MainWindow(QMainWindow):
 
     def setupUi(self):
         """Sets up nearly all of the front-end components"""
+        # Make actions
+        self.setupActions()
+
         # Menu and status bar
         self.menubar = QMenuBar(self)
         self.statusbar = QStatusBar(self)
@@ -27,7 +31,7 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.statusbar)
 
         # Toolbar
-        self.toolbar = self.addToolBar('Files')
+        self.setupToolbar()
 
         # Docks
         self.setupDocks()
@@ -40,11 +44,13 @@ class MainWindow(QMainWindow):
         self.resize(1440, 800)
         self.show()
 
-    def setupMenuFile(self, menu):
-        """Setup a particular set of actions and its menus"""
-        self.actionOpenFolder = QAction('&Open Folder', self)
+    def setupActions(self):
+        """Creates a bunch of public actions for the app"""
+        self.actionOpenFolder = QAction(QIcon('hi.png'), '&Open Folder', self)
         self.actionQuit = QAction('&Quit', self)
 
+    def setupMenuFile(self, menu):
+        """Setup a particular set of actions and its menus"""
         # Add menu actions to menu
         menu.addAction(self.actionOpenFolder)
         menu.addSeparator()
@@ -56,6 +62,12 @@ class MainWindow(QMainWindow):
     def setupMenuView(self, menu):
         """Setup view related actions and menu items"""
         menu.triggered.connect(self.menuViewHandler)
+
+    def setupToolbar(self):
+        """Setup the tool bar"""
+        self.tbFiles = self.addToolBar('Files')
+        self.tbFiles.addAction(self.actionOpenFolder)
+        self.tbFiles.addAction(self.actionQuit)
 
     def setupDocks(self):
         """Setup dockable widgets"""
@@ -205,6 +217,10 @@ class MainWindow(QMainWindow):
     def menuViewHandler(self, sender):
         """Handles any event from the view menu actions"""
         print(sender.text())
+
+    def toolbarFileHandler(self, sender):
+        """Handles any actions from Files toolbar"""
+        # print(sender.text())
 
 # Run the app
 app = QApplication(sys.argv)

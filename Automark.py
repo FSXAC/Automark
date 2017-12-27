@@ -4,7 +4,7 @@ import sys
 import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QFont
 
 # Global constants
 VERSION_NO = 'v0.0b'
@@ -25,8 +25,10 @@ class MainWindow(QMainWindow):
         self.statusbar = QStatusBar(self)
         menuFile = self.menubar.addMenu('File')
         menuView = self.menubar.addMenu('View')
+        menuOptions = self.menubar.addMenu('Options')
         self.setupMenuFile(menuFile)
         self.setupMenuView(menuView)
+        self.setupMenuOptions(menuOptions)
         self.setMenuBar(self.menubar)
         self.setStatusBar(self.statusbar)
 
@@ -72,6 +74,10 @@ class MainWindow(QMainWindow):
         self.actionDockVerdict.setCheckable(True)
         self.actionDockVerdict.setChecked(True)
 
+        # Option actions
+        self.actionSummaryMode = QAction('Summary Mode', self)
+        self.actionSummaryMode.setCheckable(True)
+
     def setupMenuFile(self, menu):
         """Setup a particular set of actions and its menus"""
         # Add menu actions to menu
@@ -91,6 +97,10 @@ class MainWindow(QMainWindow):
         menu.addAction(self.actionDockVerdict)
 
         menu.triggered.connect(self.menuViewHandler)
+
+    def setupMenuOptions(self, menu):
+        menu.addAction(self.actionSummaryMode)
+        menu.triggered.connect(self.menuOptionsHandler)
 
     def setupToolbar(self):
         """Setup the tool bar"""
@@ -113,6 +123,8 @@ class MainWindow(QMainWindow):
         self.dockFoldersContent = QWidget()
         
         # Directory indicator at the top
+        self.modeLabel = QLabel(self.dockFoldersContent) #TODO: a bit out of place
+        self.modeLabel.setText('Legacy Mode')
         cdLabel = QLabel(self.dockFoldersContent)
         cdLabel.setText('Current Directory')
         cdURL = QLineEdit(self.dockFoldersContent)
@@ -126,6 +138,7 @@ class MainWindow(QMainWindow):
 
         # Add everything together in a vertical layout
         vLayout = QVBoxLayout(self.dockFoldersContent)
+        vLayout.addWidget(self.modeLabel)
         vLayout.addLayout(cdContainer)
         vLayout.addWidget(foldersList)
 
@@ -252,8 +265,6 @@ class MainWindow(QMainWindow):
     
     def menuViewHandler(self, sender):
         """Handles any event from the view menu actions"""
-        print(sender.text() + ': ' + str(sender.isChecked()))
-        
         signal = sender.text()
         vis = sender.isChecked()
         if signal == 'Folders':
@@ -267,6 +278,16 @@ class MainWindow(QMainWindow):
         elif signal == 'Verdict':
             self.dockVerdict.setVisible(vis)
 
+    def menuOptionsHandler(self, sender):
+        signal = sender.text()
+        print(signal)
+        if signal == 'Summary Mode':
+            if sender.isChecked():
+                self.modeLabel.setText('Summary Mode')
+                
+            else:
+                self.modeLabel.setText('Legacy Mode')
+
     def openFolder(self):
         """Start a marking project"""
         # Get existing directory
@@ -275,20 +296,29 @@ class MainWindow(QMainWindow):
             QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
         )
 
-        if fdir == '':
-            return
+        if fdir == '': return
         
-        # print(fdir)
+        self.validator = Validator(self.actionSummaryMode.isChecked())
+        if not self.validator.validate(fdir): return
+
         self.statusbar.showMessage('Opened at ' + fdir)
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""
+    def __init__(self, summaryMode):
+        self.summaryMode = summaryMode
 
-class Project:
-    """This act as backend"""
-    def __init__(self, url):
-        self.rootDir = ''
+    def validate(self, path):
+        self.path = path
+        if self.summaryMode:
+            for file in os.listdir(path):
+                fname, fext = os.path.splitext(file)
+        return True
 
+    def parseSubmission(self):
+        if self.path == None or self.path == '':
+            print('Make sure to validate first before parsing submissions')
+            return False
 
 # Run the app
 app = QApplication(sys.argv)

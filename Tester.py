@@ -5,9 +5,11 @@ import shutil
 import random
 import string
 
-TESTDIR = './Tests'
-DELETE_FILES = False
-N = 3
+TESTDIR = './Tests/'
+DELETE_FILES = True
+SUMMARY = True
+LETTERS = 'abcdefghijklmnnopqrstuvwxyz'
+N = 10
 
 def generateID():
     return(random.randint(10000000, 99999999))
@@ -15,14 +17,44 @@ def generateID():
 def generateCSID():
     csid = ''
     for j in range(5):
-        if i % 2 == 0:
-            csid += random.choice(string.ascii_lowercase)
+        if j % 2 == 0:
+            csid += random.choice(LETTERS)
         else:
             csid += str(random.randint(0, 9))
     return csid
 
 def generateName():
     return 'Muchen He'
+
+def generateCFile():
+    code = """
+#include <stdio.h>
+#include <stdlib.h>
+
+#define _CRT_SECURE_NO_WARNINGS
+
+#define N 4
+
+int main(void) {
+    printf("%d %d %d\\n", N, 3, 2);
+    system("PAUSE");
+    return 0;
+}
+    """
+    return code
+
+def generateReadme():
+    return 'Empty'
+
+
+def writeSummary():
+    f = open(TESTDIR + csID + '.txt', 'w')
+    f.write(generateReadme())
+    f.close()
+
+    f = open(TESTDIR + csID + '.c', 'w')
+    f.write(generateCFile())
+    f.close()
 
 # First remove everything
 if DELETE_FILES:
@@ -39,6 +71,8 @@ if DELETE_FILES:
 # Now generate random samples
 for i in range(N):
     studentID = generateID()
-    cdID = generateCSID()
+    csID = generateCSID()
     name = generateName()
-    print(cdID)
+
+    if SUMMARY:
+        writeSummary()

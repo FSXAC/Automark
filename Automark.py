@@ -61,6 +61,7 @@ class MainWindow(QMainWindow):
         """Setup dockable widgets"""
         self.setupDockFolders()
         self.setupDockFiles()
+        self.setupDockSubmission()
 
     def setupDockFolders(self):
         """Setup docking widget that shows all the folders"""
@@ -103,6 +104,53 @@ class MainWindow(QMainWindow):
         self.dockFiles.setWidget(self.dockFilesContents)
         self.dockFiles.setWindowTitle('Files')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFiles)
+
+    def setupDockSubmission(self):
+        """Setup dock that shows student information"""
+        self.dockSubmission = QDockWidget(self)
+        self.dockSubmissionContents = QWidget()
+
+        # Labels
+        l_name = QLabel(self.dockSubmissionContents)
+        l_email = QLabel(self.dockSubmissionContents)
+        l_id = QLabel(self.dockSubmissionContents)
+        l_csid = QLabel(self.dockSubmissionContents)
+        l_date = QLabel(self.dockSubmissionContents)
+        l_name.setText('Name')
+        l_email.setText('Email')
+        l_id.setText('ID')
+        l_csid.setText('CSID')
+        l_date.setText('Date')
+
+        # Text fields
+        t_name = QLineEdit(self.dockSubmissionContents)
+        t_email = QLineEdit(self.dockSubmissionContents)
+        t_id = QLineEdit(self.dockSubmissionContents)
+        t_csid = QLineEdit(self.dockSubmissionContents)
+        t_date = QLineEdit(self.dockSubmissionContents)
+        t_name.setReadOnly(True)
+        t_email.setReadOnly(True)
+        t_id.setReadOnly(True)
+        t_csid.setReadOnly(True)
+        t_date.setReadOnly(True)
+
+        # Add to grid
+        layout = QGridLayout(self.dockSubmissionContents)
+        layout.addWidget(l_name, 0, 0, 1, 1)
+        layout.addWidget(t_name, 0, 1, 1, 1)
+        layout.addWidget(l_email, 1, 0, 1, 1);
+        layout.addWidget(t_email, 1, 1, 1, 1);
+        layout.addWidget(l_id, 2, 0, 1, 1);
+        layout.addWidget(t_id, 2, 1, 1, 1);
+        layout.addWidget(l_csid, 3, 0, 1, 1);
+        layout.addWidget(t_csid, 3, 1, 1, 1);
+        layout.addWidget(l_date, 4, 0, 1, 1);
+        layout.addWidget(t_date, 4, 1, 1, 1);
+        
+        # Add to widget
+        self.dockSubmission.setWidget(self.dockSubmissionContents)
+        self.dockSubmission.setWindowTitle('Submission')
+        self.addDockWidget(Qt.RightDockWidgetArea, self.dockSubmission)
 
     def menuFileHandler(self, sender):
         """Handles events of menu items being clicked on"""

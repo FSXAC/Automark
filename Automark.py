@@ -134,13 +134,13 @@ class MainWindow(QMainWindow):
         cdContainer.addWidget(cdURL)
 
         # List view
-        foldersList = QListView(self.dockFoldersContent)
+        self.foldersList = QListView(self.dockFoldersContent)
 
         # Add everything together in a vertical layout
         vLayout = QVBoxLayout(self.dockFoldersContent)
         vLayout.addWidget(self.modeLabel)
         vLayout.addLayout(cdContainer)
-        vLayout.addWidget(foldersList)
+        vLayout.addWidget(self.foldersList)
 
         # Add dock widget to main window
         self.dockFolders.setWidget(self.dockFoldersContent)
@@ -301,6 +301,13 @@ class MainWindow(QMainWindow):
         self.validator = Validator(self.actionSummaryMode.isChecked())
         if not self.validator.validate(fdir): return
 
+        # Parse the contents in the directory
+        # subs = self.validator.parseSubmission()
+        # self.foldersList.
+        # TODO: make the folder list a separate class
+        # https://www.pythoncentral.io/pyside-pyqt-tutorial-the-qlistwidget/
+
+        # Let user know the folder is opened
         self.statusbar.showMessage('Opened at ' + fdir)
 
 class Validator:
@@ -313,12 +320,20 @@ class Validator:
         if self.summaryMode:
             for file in os.listdir(path):
                 fname, fext = os.path.splitext(file)
+
+                # Find something that is odd then return false
         return True
 
     def parseSubmission(self):
         if self.path == None or self.path == '':
             print('Make sure to validate first before parsing submissions')
             return False
+
+        items = []
+        for file in os.listdir(self.path):
+            fname, fext = os.path.splitext(file)
+            items.append(fname)
+        return items
 
 # Run the app
 app = QApplication(sys.argv)

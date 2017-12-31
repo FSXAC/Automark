@@ -33,6 +33,13 @@ class App(QWidget):
         self.addMail(model, '2@a.com', 'SUBJECT B', '2017-12-31')
         self.addMail(model, '3@a.com', 'SUBJECT C', '2017-12-31')
 
+        model.item(0).setCheckable(True)
+        model.item(1).setEditable(False)
+        model.item(2).setEnabled(False)
+
+        model.itemChanged.connect(self.onItemChanged)
+        
+
         # Put things in window
         mainLayout = QVBoxLayout()
         mainLayout.addWidget(self.treeview)
@@ -51,10 +58,12 @@ class App(QWidget):
         model.setData(model.index(0, self.FROM), sender)
         model.setData(model.index(0, self.SUBJECT), subject)
         model.setData(model.index(0, self.DATE), date)
+        
+    def onItemChanged(self, item):
+        print(item)
 
 # Run app
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     exe = App()
     sys.exit(app.exec_())
-

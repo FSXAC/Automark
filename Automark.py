@@ -74,6 +74,10 @@ class MainWindow(QMainWindow):
         self.actionDockVerdict.setCheckable(True)
         self.actionDockVerdict.setChecked(True)
 
+        self.actionDockSummarized = QAction('Summarized', self)
+        self.actionDockSummarized.setCheckable(True)
+        self.actionDockSummarized.setEnabled(False)
+
         # Option actions
         self.actionSummaryMode = QAction('Summary Mode', self)
         self.actionSummaryMode.setCheckable(True)
@@ -96,6 +100,9 @@ class MainWindow(QMainWindow):
         menu.addAction(self.actionDockOutput)
         menu.addAction(self.actionDockVerdict)
 
+        menu.addSeparator()
+        menu.addAction(self.actionDockSummarized)
+
         menu.triggered.connect(self.menuViewHandler)
 
     def setupMenuOptions(self, menu):
@@ -113,6 +120,7 @@ class MainWindow(QMainWindow):
         """Setup dockable widgets"""
         self.setupDockFolders()
         self.setupDockFiles()
+        self.setupDockSummarized()
         self.setupDockSubmission()
         self.setupDockOutput()
         self.setupDockVerdict()
@@ -123,8 +131,8 @@ class MainWindow(QMainWindow):
         self.dockFoldersContent = QWidget()
         
         # Directory indicator at the top
-        self.modeLabel = QLabel(self.dockFoldersContent) #TODO: a bit out of place
-        self.modeLabel.setText('Legacy Mode')
+        modeLabel = QLabel(self.dockFoldersContent)
+        modeLabel.setText('Legacy Mode')
         cdLabel = QLabel(self.dockFoldersContent)
         cdLabel.setText('Current Directory')
         cdURL = QLineEdit(self.dockFoldersContent)
@@ -138,7 +146,7 @@ class MainWindow(QMainWindow):
 
         # Add everything together in a vertical layout
         vLayout = QVBoxLayout(self.dockFoldersContent)
-        vLayout.addWidget(self.modeLabel)
+        vLayout.addWidget(modeLabel)
         vLayout.addLayout(cdContainer)
         vLayout.addWidget(self.foldersList)
 
@@ -165,6 +173,21 @@ class MainWindow(QMainWindow):
         self.dockFiles.setWindowTitle('Files')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockFiles)
         self.dockFiles.visibilityChanged.connect(lambda x: self.actionDockFiles.setChecked(x))
+
+    def setupDockSummarized(self):
+        """Setup navigation menu for summarized mode"""
+        self.dockSummarized = QDockWidget(self)
+        self.dockSummarizedContent = QWidget()
+        # TODO: Reduce repetitive code
+        modeLabel = QLabel(self.dockSummarizedContent)
+        modeLabel.setText('Summary Mode')
+        cdLabel = QLabel(self.dockFoldersContent)
+        cdLabel.setText('Current Directory')
+        cdURL = QLineEdit(self.dockFoldersContent)
+        cdURL.setReadOnly(True)
+        cdContainer = QHBoxLayout()
+        cdContainer.addWidget(cdLabel)
+        cdContainer.addWidget(cdURL)
 
     def setupDockSubmission(self):
         """Setup dock that shows student information"""
@@ -277,16 +300,13 @@ class MainWindow(QMainWindow):
             self.dockOutput.setVisible(vis)
         elif signal == 'Verdict':
             self.dockVerdict.setVisible(vis)
+        elif signal == 'Summarized':
+            self.dockSummarized.setVisible(vis)
 
     def menuOptionsHandler(self, sender):
         signal = sender.text()
-        print(signal)
         if signal == 'Summary Mode':
-            if sender.isChecked():
-                self.modeLabel.setText('Summary Mode')
-                
-            else:
-                self.modeLabel.setText('Legacy Mode')
+            self.setMarkingSummaryMode(sender.isChecked)
 
     def openFolder(self):
         """Start a marking project"""
@@ -309,6 +329,16 @@ class MainWindow(QMainWindow):
 
         # Let user know the folder is opened
         self.statusbar.showMessage('Opened at ' + fdir)
+
+    def setMarkingSummaryMode(self, summary):
+        self.actionDockFiles.setChecked(not summary)
+        self.actionDockFiles.setEnabled(not summary)
+        self.actionDockFolders.setChecked(not summary)
+        self.actionDockFolders.setEnabled(not summary)
+        self.dockFolders.setVisible(not summary)
+        self.dockFiles.setVisible(not summary)
+
+
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""

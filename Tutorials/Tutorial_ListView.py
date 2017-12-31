@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from PyQt5.QtCore import Qt
 
 # Create a Qt application
 app = QApplication(sys.argv)
@@ -35,27 +36,18 @@ for food in foods:
     # Add the item to the model
     model.appendRow(item)
 
+def onItemClicked(modelIndex):
+    print(modelIndex.row(), modelIndex.column())
 
-def on_item_changed(item):
-    # If the changed item is not checked, don't bother checking others
-    print(item)
-    # if not item.checkState():
-    #     return
-
-    # # Loop through the items until you get None, which
-    # # means you've passed the end of the list
-    # i = 0
-    # while model.item(i):
-    #     if not model.item(i).checkState():
-    #         return
-    #     i += 1
-
-    # app.quit()
-
-model.itemChanged.connect(on_item_changed)
+    item = model.item(modelIndex.row())
+    if item.checkState() == Qt.Checked:
+        item.setCheckState(Qt.Unchecked)
+    else:
+        item.setCheckState(Qt.Checked)
 
 # Apply the model to the list view
 list.setModel(model)
+list.clicked.connect(onItemClicked)
 
 # Show the window and run the app
 list.show()

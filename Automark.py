@@ -81,6 +81,7 @@ class MainWindow(QMainWindow):
         # Option actions
         self.actionSummaryMode = QAction('Summary Mode', self)
         self.actionSummaryMode.setCheckable(True)
+        self.actionSummaryMode.setShortcut('Ctrl+M')
 
     def setupMenuFile(self, menu):
         """Setup a particular set of actions and its menus"""
@@ -181,13 +182,24 @@ class MainWindow(QMainWindow):
         # TODO: Reduce repetitive code
         modeLabel = QLabel(self.dockSummarizedContent)
         modeLabel.setText('Summary Mode')
-        cdLabel = QLabel(self.dockFoldersContent)
+        cdLabel = QLabel(self.dockSummarizedContent)
         cdLabel.setText('Current Directory')
-        cdURL = QLineEdit(self.dockFoldersContent)
+        cdURL = QLineEdit(self.dockSummarizedContent)
         cdURL.setReadOnly(True)
         cdContainer = QHBoxLayout()
         cdContainer.addWidget(cdLabel)
         cdContainer.addWidget(cdURL)
+        vLayout = QVBoxLayout(self.dockSummarizedContent)
+        vLayout.addWidget(modeLabel)
+        vLayout.addLayout(cdContainer)
+        self.summaryTree = QTreeView()
+        vLayout.addWidget(self.summaryTree)
+        self.dockSummarized.setWidget(self.dockSummarizedContent)
+        self.dockSummarized.setWindowTitle('Submissions Summary')
+        self.addDockWidget(Qt.LeftDockWidgetArea, self.dockSummarized)
+        self.dockSummarized.setVisible(False)
+
+        self.dockSummarized.visibilityChanged.connect(lambda x: self.actionDockSummarized.setChecked(x))
 
     def setupDockSubmission(self):
         """Setup dock that shows student information"""
@@ -306,7 +318,7 @@ class MainWindow(QMainWindow):
     def menuOptionsHandler(self, sender):
         signal = sender.text()
         if signal == 'Summary Mode':
-            self.setMarkingSummaryMode(sender.isChecked)
+            self.setMarkingSummaryMode(sender.isChecked())
 
     def openFolder(self):
         """Start a marking project"""
@@ -337,8 +349,8 @@ class MainWindow(QMainWindow):
         self.actionDockFolders.setEnabled(not summary)
         self.dockFolders.setVisible(not summary)
         self.dockFiles.setVisible(not summary)
-
-
+        self.actionDockSummarized.setEnabled(summary)
+        self.dockSummarized.setVisible(summary)
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""

@@ -3,7 +3,7 @@
 import sys
 import os
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
 
 # Global constants
@@ -11,6 +11,9 @@ VERSION_NO = 'v0.0b'
 
 class SummaryTree(QTreeView):
     SID, STATUS = range(2)
+
+    # Signals
+    summarySelected = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
@@ -35,9 +38,9 @@ class SummaryTree(QTreeView):
     def itemSelected(self, modelIndex):
         item = self.model().item(modelIndex.row())
         print(item.text())
+        self.summarySelected.emit(item.text())
 
     def addEntry(self, sid, status):
-        print(sid)
         self.model().insertRow(0)
         self.model().setData(self.model().index(0, self.SID), sid)
         self.model().setData(self.model().index(0, self.STATUS), status)
@@ -52,6 +55,7 @@ class SummaryTree(QTreeView):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.currentDirectory = ''
         self.setWindowTitle('Automark ' + VERSION_NO)
         self.setupUi()
 
@@ -234,8 +238,12 @@ class MainWindow(QMainWindow):
         vLayout.addLayout(cdContainer)
         # self.summaryTree = QTreeView()
         # vLayout.addWidget(self.summaryTree)
+
         self.summaryTree = SummaryTree()
+        self.summaryTree.summarySelected.connect(self.summaryOpenHandler)
         vLayout.addWidget(self.summaryTree)
+
+
         self.dockSummarized.setWidget(self.dockSummarizedContent)
         self.dockSummarized.setWindowTitle('Submissions Summary')
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dockSummarized)
@@ -383,11 +391,15 @@ class MainWindow(QMainWindow):
 
         if self.actionSummaryMode.isChecked():
             self.loadSummary(self.validator.parseSummary())
+            
+            # Let user know the folder is opened and set current directory
+            self.setCurrentDirectory(fdir)
+            self.statusbar.showMessage('Opened summary folder at ' + fdir)
         else:
             self.loadSubmissions()
 
-        # Let user know the folder is opened
-        self.statusbar.showMessage('Opened at ' + fdir)
+    def setCurrentDirectory(self, fdir):
+        self.currentDirectory = fdir
 
     def setMarkingSummaryMode(self, summary):
         self.actionDockFiles.setChecked(not summary)
@@ -400,18 +412,36 @@ class MainWindow(QMainWindow):
         self.dockSummarized.setVisible(summary)
 
     def loadSummary(self, summaryList):
-        # path = fdir
-        # for file in os.listDir
-        # self.summaryTree.addEntry()
         # first clear all items in the summary tree
-        self.summaryTree.clearAll()
-
         # then add all entries
+        self.summaryTree.clearAll()
         for submission in summaryList:
             self.summaryTree.addEntry(submission, 'Unmarked')
 
     def loadSubmissions(self):
         """WIP"""
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+        msg.setText('Only Summary Mode is supported at this time')
+        msg.setInformativeText('Please switch to Summary Mode in the Options menu')
+        msg.setWindowTitle('Not supported')
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
+
+    def summaryOpenHandler(self, sid):
+        txtFileDir = self.currentDirectory + '/' + sid + '.txt'
+        cFileDir = self.currentDirectory + '/' + sid + '.c'
+        try:
+            txtFile = open(txtFileDir, 'r')
+            print(txtFile.read())
+            txtFile.close()
+
+            cFile = open(cFileDir, 'r')
+            self.textedit.setText(cFile.read())
+            cFile.close()
+
+        except Exception as e:
+            print(e)
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""
@@ -424,7 +454,6 @@ class Validator:
         if self.summaryMode:
             for file in os.listdir(path):
                 fname, fext = os.path.splitext(file)
-
                 # Find something that is odd then return false
         return True
 
@@ -436,7 +465,7 @@ class Validator:
         items = []
         for file in os.listdir(self.path):
             fname, fext = os.path.splitext(file)
-            items.append(fname)
+            if fname not in items: items.append(fname)
         return items
 
 # Run the app

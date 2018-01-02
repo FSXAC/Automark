@@ -3,11 +3,48 @@
 import sys
 import os
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import QIcon, QFont
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
 
 # Global constants
 VERSION_NO = 'v0.0b'
+
+class SummaryTree(QTreeView):
+    SID, STATUS = range(2)
+
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
+
+    def setupUi(self):
+        model = self.createSummaryModel()
+        self.setModel(model)
+        self.clicked.connect(
+            lambda x: self.itemSelected(model, x)
+        )
+
+        # Populate with some dummy data
+        self.addEntry(model, 'p5h0b', 'Unmarked')
+
+    def createSummaryModel(self):
+        # Create standard model with 0 rows, and 2 columns
+        # and self as parent
+        model = QStandardItemModel(0, 2, self)
+        model.setHeaderData(self.SID, Qt.Horizontal, 'ID')
+        model.setHeaderData(self.STATUS, Qt.Horizontal, 'Status')
+        return model
+
+    def itemSelected(self, model, modelIndex):
+        item = model.item(modelIndex.row())
+        # item = self.model().item(modelIndex.row())
+        print(item.text())
+
+    def addEntry(self, model, sid, status):
+        model.insertRow(0)
+        model.setData(model.index(0, self.SID), sid)
+        model.setData(model.index(0, self.STATUS), status)
+        model.item(0, self.SID).setEditable(False)
+        model.item(0, self.STATUS).setEditable(False)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -339,6 +376,11 @@ class MainWindow(QMainWindow):
         # TODO: make the folder list a separate class
         # https://www.pythoncentral.io/pyside-pyqt-tutorial-the-qlistwidget/
 
+        if self.actionSummaryMode.isChecked():
+            self.loadSummary(fdir)
+        else:
+            self.loadSubmissions()
+
         # Let user know the folder is opened
         self.statusbar.showMessage('Opened at ' + fdir)
 
@@ -351,6 +393,13 @@ class MainWindow(QMainWindow):
         self.dockFiles.setVisible(not summary)
         self.actionDockSummarized.setEnabled(summary)
         self.dockSummarized.setVisible(summary)
+
+    def loadSummary(self, fdir):
+        path = fdir
+        # TODO: continue from here to populate tree view
+
+    def loadSubmissions(self):
+        """WIP"""
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""

@@ -20,37 +20,61 @@ class Highlighter(QSyntaxHighlighter):
         # and the result is the text char format (QTextCharFormat)
         self.highlightingRules = {}
 
-        # Regular expressions
-        self.commentStartExpression = ''
-        self.commentEndExpression = ''
-
         # Text formats
         self.setupTextCharFormats()
 
     def setupTextCharFormats(self):
         # Keywords
         keywordFormat = QTextCharFormat()
-        keywordFormat.setForeground(Qt.darkBlue)
+        keywordFormat.setForeground(Qt.magenta)
         keywordFormat.setFontWeight(QFont.Bold)
         keywordPatterns = [
             '\\bchar\\b', '\\bconst\\b', '\\bdouble\\b', '\\benum\\b',
             '\\bint\\b', '\\blong\\b', '\\bshort\\b', '\\bsigned\\b',
             '\\bunsigned\\b', '\\bstatic\\b', '\\bstruct\\b', '\\btypedef\\b',
-            '\\bvoid\\b', '\\bvolatile\\b', '\\bbool\\b'
+            '\\bvoid\\b', '\\bvolatile\\b', '\\bbool\\b', '\\#\\bdefine\\b'
         ]
-
         for pattern in keywordPatterns:
-            self.highlightingRules[pattern] = keywordFormat
+            patternRegex = QRegularExpression(pattern)
+            self.highlightingRules[patternRegex] = keywordFormat
 
-        print(self.highlightingRules)
-        # self.classFormat = ''
-        # self.singleLineCommentFormat = ''
-        # self.multiLineCommentFormat = ''
-        # self.quotationFormat = ''
-        # self.functionFormat = ''
+        # Quotations
+        quotationFormat = QTextCharFormat()
+        quotationFormat.setForeground(Qt.darkGreen)
+        quotationRegex = QRegularExpression('\".*\"')
+        self.highlightingRules[quotationRegex] = quotationFormat
+
+        # Functions
+        functionFormat = QTextCharFormat()
+        functionFormat.setForeground(Qt.darkYellow)
+        functionFormat.setFontItalic(True)
+        functionRegex = QRegularExpression('\\b[A-Za-z0-9_]+(?=\\()')
+        self.highlightingRules[functionRegex] = functionFormat
+
+        # Single line comments
+        singleLineCommentFormat = QTextCharFormat()
+        singleLineCommentFormat.setForeground(Qt.gray)
+        singleLineCommentFormat.setFontItalic(True)
+        singleLineCommentRegex = QRegularExpression('\/\/[^\n]*')
+        self.highlightingRules[singleLineCommentRegex] = singleLineCommentFormat
+        
+        # Multi line comments
+        multiLineCommentFormat = QTextCharFormat()
+        multiLineCommentFormat.setForeground(Qt.gray)
+        multiLineCommentFormat.setFontItalic(True)
+        multiLineCommentStartRegex = QRegularExpression('\/\\*')
+        multiLineCommentEndRegex = QRegularExpression('\\*/')
     
     def highlightBlock(self, text):
         """Override highlight block function"""
+
+        for rule in self.highlightingRules:
+            matchFormat = self.highlightingRules[rule]
+            matchIterator = rule.globalMatch(text)
+
+            while matchIterator.hasNext():
+                match = matchIterator.next()
+                self.setFormat(match.capturedStart(), match.capturedLength(), matchFormat)
 
 
 class CodeEdit(QTextEdit):

@@ -17,14 +17,12 @@ class SummaryTree(QTreeView):
         self.setupUi()
 
     def setupUi(self):
-        model = self.createSummaryModel()
-        self.setModel(model)
-        self.clicked.connect(
-            lambda x: self.itemSelected(model, x)
-        )
+        self.setModel(self.createSummaryModel())
+        # self.reset()
+        self.clicked.connect(self.itemSelected)
 
         # Populate with some dummy data
-        self.addEntry(model, 'p5h0b', 'Unmarked')
+        self.addEntry('p5h0b', 'Unmarked')
 
     def createSummaryModel(self):
         # Create standard model with 0 rows, and 2 columns
@@ -34,17 +32,22 @@ class SummaryTree(QTreeView):
         model.setHeaderData(self.STATUS, Qt.Horizontal, 'Status')
         return model
 
-    def itemSelected(self, model, modelIndex):
-        item = model.item(modelIndex.row())
-        # item = self.model().item(modelIndex.row())
+    def itemSelected(self, modelIndex):
+        item = self.model().item(modelIndex.row())
         print(item.text())
 
-    def addEntry(self, model, sid, status):
-        model.insertRow(0)
-        model.setData(model.index(0, self.SID), sid)
-        model.setData(model.index(0, self.STATUS), status)
-        model.item(0, self.SID).setEditable(False)
-        model.item(0, self.STATUS).setEditable(False)
+    def addEntry(self, sid, status):
+        print(sid)
+        self.model().insertRow(0)
+        self.model().setData(self.model().index(0, self.SID), sid)
+        self.model().setData(self.model().index(0, self.STATUS), status)
+        self.model().item(0, self.SID).setEditable(False)
+        self.model().item(0, self.STATUS).setEditable(False)
+
+    def clearAll(self):
+        # self.setModel(self.createSummaryModel())
+        # print('reset')
+        self.setModel(self.createSummaryModel())
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -379,7 +382,7 @@ class MainWindow(QMainWindow):
         # https://www.pythoncentral.io/pyside-pyqt-tutorial-the-qlistwidget/
 
         if self.actionSummaryMode.isChecked():
-            self.loadSummary(fdir)
+            self.loadSummary(self.validator.parseSummary())
         else:
             self.loadSubmissions()
 
@@ -396,9 +399,16 @@ class MainWindow(QMainWindow):
         self.actionDockSummarized.setEnabled(summary)
         self.dockSummarized.setVisible(summary)
 
-    def loadSummary(self, fdir):
-        path = fdir
-        # TODO: continue from here to populate tree view
+    def loadSummary(self, summaryList):
+        # path = fdir
+        # for file in os.listDir
+        # self.summaryTree.addEntry()
+        # first clear all items in the summary tree
+        self.summaryTree.clearAll()
+
+        # then add all entries
+        for submission in summaryList:
+            self.summaryTree.addEntry(submission, 'Unmarked')
 
     def loadSubmissions(self):
         """WIP"""
@@ -407,6 +417,7 @@ class Validator:
     """This class is instantiated to check if current directory contains the right files"""
     def __init__(self, summaryMode):
         self.summaryMode = summaryMode
+        self.path = ''
 
     def validate(self, path):
         self.path = path
@@ -417,7 +428,7 @@ class Validator:
                 # Find something that is odd then return false
         return True
 
-    def parseSubmission(self):
+    def parseSummary(self):
         if self.path == None or self.path == '':
             print('Make sure to validate first before parsing submissions')
             return False

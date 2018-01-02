@@ -5,9 +5,53 @@ import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
+from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat
+from PyQt5.QtCore import QRegularExpression
 
 # Global constants
-VERSION_NO = 'v0.0b'
+VERSION_NO = 'v0.1'
+
+class Highlighter(QSyntaxHighlighter):
+    def __init__(self, textDocument):
+        super().__init__(textDocument)
+
+        # This dictionary consists of highlighting rules
+        # Where the key is the regular expression (QRegularExpression)
+        # and the result is the text char format (QTextCharFormat)
+        self.highlightingRules = {}
+
+        # Regular expressions
+        self.commentStartExpression = ''
+        self.commentEndExpression = ''
+
+        # Text formats
+        self.setupTextCharFormats()
+
+    def setupTextCharFormats(self):
+        # Keywords
+        keywordFormat = QTextCharFormat()
+        keywordFormat.setForeground(Qt.darkBlue)
+        keywordFormat.setFontWeight(QFont.Bold)
+        keywordPatterns = [
+            '\\bchar\\b', '\\bconst\\b', '\\bdouble\\b', '\\benum\\b',
+            '\\bint\\b', '\\blong\\b', '\\bshort\\b', '\\bsigned\\b',
+            '\\bunsigned\\b', '\\bstatic\\b', '\\bstruct\\b', '\\btypedef\\b',
+            '\\bvoid\\b', '\\bvolatile\\b', '\\bbool\\b'
+        ]
+
+        for pattern in keywordPatterns:
+            self.highlightingRules[pattern] = keywordFormat
+
+        print(self.highlightingRules)
+        # self.classFormat = ''
+        # self.singleLineCommentFormat = ''
+        # self.multiLineCommentFormat = ''
+        # self.quotationFormat = ''
+        # self.functionFormat = ''
+    
+    def highlightBlock(self, text):
+        """Override highlight block function"""
+
 
 class CodeEdit(QTextEdit):
     def __init__(self):
@@ -29,11 +73,7 @@ class SummaryTree(QTreeView):
 
     def setupUi(self):
         self.setModel(self.createSummaryModel())
-        # self.reset()
         self.clicked.connect(self.itemSelected)
-
-        # Populate with some dummy data
-        self.addEntry('p5h0b', 'Unmarked')
 
     def createSummaryModel(self):
         # Create standard model with 0 rows, and 2 columns
@@ -56,8 +96,6 @@ class SummaryTree(QTreeView):
         self.model().item(0, self.STATUS).setEditable(False)
 
     def clearAll(self):
-        # self.setModel(self.createSummaryModel())
-        # print('reset')
         self.setModel(self.createSummaryModel())
 
 class MainWindow(QMainWindow):
@@ -91,13 +129,22 @@ class MainWindow(QMainWindow):
         self.setupDocks()
 
         # Central widget
-        # self.textedit = QTextEdit()
-        self.textedit = CodeEdit()
+        self.textedit = self.createTextEditor()
+        self.highlighter = Highlighter(self.textedit.document())
         self.setCentralWidget(self.textedit)
 
         # Window
         self.resize(1440, 800)
         self.show()
+
+    def createTextEditor(self):
+        editor = CodeEdit()
+        font = QFont()
+        font.setFamily('Courier New')
+        font.setFixedPitch(True)
+        font.setPointSize(12)
+        editor.setFont(font)
+        return editor
 
     def setupActions(self):
         """Creates a bunch of public actions for the app"""

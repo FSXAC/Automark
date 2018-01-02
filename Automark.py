@@ -9,6 +9,14 @@ from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
 # Global constants
 VERSION_NO = 'v0.0b'
 
+class CodeEdit(QTextEdit):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
+
+    def setupUi(self):
+        print('Code edit online')
+
 class SummaryTree(QTreeView):
     SID, STATUS = range(2)
 
@@ -83,7 +91,8 @@ class MainWindow(QMainWindow):
         self.setupDocks()
 
         # Central widget
-        self.textedit = QTextEdit()
+        # self.textedit = QTextEdit()
+        self.textedit = CodeEdit()
         self.setCentralWidget(self.textedit)
 
         # Window
@@ -236,8 +245,6 @@ class MainWindow(QMainWindow):
         vLayout = QVBoxLayout(self.dockSummarizedContent)
         vLayout.addWidget(modeLabel)
         vLayout.addLayout(cdContainer)
-        # self.summaryTree = QTreeView()
-        # vLayout.addWidget(self.summaryTree)
 
         self.summaryTree = SummaryTree()
         self.summaryTree.summarySelected.connect(self.summaryOpenHandler)
@@ -433,7 +440,7 @@ class MainWindow(QMainWindow):
         cFileDir = self.currentDirectory + '/' + sid + '.c'
         try:
             txtFile = open(txtFileDir, 'r')
-            print(txtFile.read())
+            print(txtFile.read()) # TODO:
             txtFile.close()
 
             cFile = open(cFileDir, 'r')

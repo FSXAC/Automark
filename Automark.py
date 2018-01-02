@@ -5,7 +5,7 @@ import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
-from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat
+from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QPalette, QColor
 from PyQt5.QtCore import QRegularExpression
 
 # Global constants
@@ -26,44 +26,56 @@ class Highlighter(QSyntaxHighlighter):
     def setupTextCharFormats(self):
         # Keywords
         keywordFormat = QTextCharFormat()
-        keywordFormat.setForeground(Qt.magenta)
-        keywordFormat.setFontWeight(QFont.Bold)
+        keywordFormat.setForeground(QColor('#F92672'))
         keywordPatterns = [
-            '\\bchar\\b', '\\bconst\\b', '\\bdouble\\b', '\\benum\\b',
-            '\\bint\\b', '\\blong\\b', '\\bshort\\b', '\\bsigned\\b',
-            '\\bunsigned\\b', '\\bstatic\\b', '\\bstruct\\b', '\\btypedef\\b',
-            '\\bvoid\\b', '\\bvolatile\\b', '\\bbool\\b', '\\#\\bdefine\\b'
+            '\\#\\bdefine\\b', '\\#\\binclude\\b', '\\breturn\\b',
+            '\\bconst\\b', '\\bvolatile\\b', '\\bextern\\b',
+            '\\bstatic\\b'
         ]
         for pattern in keywordPatterns:
             patternRegex = QRegularExpression(pattern)
             self.highlightingRules[patternRegex] = keywordFormat
 
+        # Types
+        typeFormat = QTextCharFormat()
+        typeFormat.setForeground(QColor('#66D9EF'))
+        typeFormat.setFontItalic(True)
+        typePatterns = [
+            '\\bchar\\b', '\\bint\\b', '\\blong\\b', '\\bshort\\b', 
+            '\\bsigned\\b', '\\bunsigned\\b', '\\bvoid\\b',
+            '\\bstruct\\b', '\\btypedef\\b'
+        ]
+        for pattern in typePatterns:
+            regex = QRegularExpression(pattern)
+            self.highlightingRules[regex] = typeFormat
+
         # Quotations
         quotationFormat = QTextCharFormat()
-        quotationFormat.setForeground(Qt.darkGreen)
+        quotationFormat.setForeground(QColor('#E3D859'))
         quotationRegex = QRegularExpression('\".*\"')
         self.highlightingRules[quotationRegex] = quotationFormat
 
+        # Includes
+        includeRegex = QRegularExpression('\\<.*\\>')
+        self.highlightingRules[includeRegex] = quotationFormat
+
         # Functions
         functionFormat = QTextCharFormat()
-        functionFormat.setForeground(Qt.darkYellow)
-        functionFormat.setFontItalic(True)
+        functionFormat.setForeground(QColor('#A6E22E'))
         functionRegex = QRegularExpression('\\b[A-Za-z0-9_]+(?=\\()')
         self.highlightingRules[functionRegex] = functionFormat
 
         # Single line comments
         singleLineCommentFormat = QTextCharFormat()
         singleLineCommentFormat.setForeground(Qt.gray)
-        singleLineCommentFormat.setFontItalic(True)
         singleLineCommentRegex = QRegularExpression('\/\/[^\n]*')
         self.highlightingRules[singleLineCommentRegex] = singleLineCommentFormat
         
         # Multi line comments
-        multiLineCommentFormat = QTextCharFormat()
-        multiLineCommentFormat.setForeground(Qt.gray)
-        multiLineCommentFormat.setFontItalic(True)
-        multiLineCommentStartRegex = QRegularExpression('\/\\*')
-        multiLineCommentEndRegex = QRegularExpression('\\*/')
+        self.multiLineCommentFormat = QTextCharFormat()
+        self.multiLineCommentFormat.setForeground(Qt.gray)
+        self.multiLineCommentStartRegex = QRegularExpression('\/\\*')
+        self.multiLineCommentEndRegex = QRegularExpression('\\*/')
     
     def highlightBlock(self, text):
         """Override highlight block function"""
@@ -76,6 +88,35 @@ class Highlighter(QSyntaxHighlighter):
                 match = matchIterator.next()
                 self.setFormat(match.capturedStart(), match.capturedLength(), matchFormat)
 
+        # Highlight multiline comments
+
+        # Set current block state to 0
+        # where 0 is outside a block comment and 1 is inside
+        # self.setCurrentBlockState(0)
+
+        # startIndex = 0
+        # if self.previousBlockState() != 1:
+        #     # startIndex = text.index(self.multiLineCommentStartRegex)
+
+        #     matchIterator = self.multiLineCommentStartRegex.globalMatch(text)
+        #     if matchIterator.hasNext():
+        #         match = matchIterator.next()
+        #         startIndex = match.capturedStart()
+
+        # while startIndex > 0:
+        #     match = self.multiLineCommentEndRegex.match(text, startIndex)
+        #     endIndex = match.capturedStart()
+        #     commentLength = 0
+        #     if endIndex == -1:
+        #         self.setCurrentBlockState(1)
+        #         commentLength = text.length() - startIndex
+        #     else:
+        #         commentLength = endIndex - startIndex + match.capturedLength()
+        
+        #     # set format for block
+        #     self.setFormat(startIndex, commentLength, self.multiLineCommentFormat)
+        #     startIndex = text.index(self.multiLineCommentStartRegex, startIndex + commentLength)
+
 
 class CodeEdit(QTextEdit):
     def __init__(self):
@@ -83,7 +124,17 @@ class CodeEdit(QTextEdit):
         self.setupUi()
 
     def setupUi(self):
-        print('Code edit online')
+        # self.setTextBackgroundColor(Qt.darkGray)
+        palette = QPalette()
+        palette.setColor(QPalette.Base, QColor('#333'))
+        palette.setColor(QPalette.Text, Qt.white)
+        self.setPalette(palette)
+
+        font = QFont()
+        font.setFamily('Consolas')
+        font.setFixedPitch(True)
+        font.setPointSize(12)
+        self.setFont(font)
 
 class SummaryTree(QTreeView):
     SID, STATUS = range(2)
@@ -153,22 +204,13 @@ class MainWindow(QMainWindow):
         self.setupDocks()
 
         # Central widget
-        self.textedit = self.createTextEditor()
+        self.textedit = CodeEdit()
         self.highlighter = Highlighter(self.textedit.document())
         self.setCentralWidget(self.textedit)
 
         # Window
         self.resize(1440, 800)
         self.show()
-
-    def createTextEditor(self):
-        editor = CodeEdit()
-        font = QFont()
-        font.setFamily('Courier New')
-        font.setFixedPitch(True)
-        font.setPointSize(12)
-        editor.setFont(font)
-        return editor
 
     def setupActions(self):
         """Creates a bunch of public actions for the app"""

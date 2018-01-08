@@ -2,6 +2,7 @@
 
 import sys
 import os
+import subprocess
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
@@ -177,6 +178,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.currentDirectory = ''
+        self.currentFile = ''
         self.setWindowTitle('Automark ' + VERSION_NO)
         self.setupUi()
 
@@ -191,9 +193,11 @@ class MainWindow(QMainWindow):
         menuFile = self.menubar.addMenu('File')
         menuView = self.menubar.addMenu('View')
         menuOptions = self.menubar.addMenu('Options')
+        menuRun = self.menubar.addMenu('Run')
         self.setupMenuFile(menuFile)
         self.setupMenuView(menuView)
         self.setupMenuOptions(menuOptions)
+        self.setupMenuRun(menuRun)
         self.setMenuBar(self.menubar)
         self.setStatusBar(self.statusbar)
 
@@ -250,8 +254,8 @@ class MainWindow(QMainWindow):
         self.actionSummaryMode.setShortcut('Ctrl+M')
 
         # Compile actions
-        self.actionRun = QAction('Run current', self)
-        self.actionRunAll = QAction('Run all', self)
+        self.actionRun = QAction(QIcon('res/compile_one.png'), 'Run', self)
+        self.actionRunAll = QAction(QIcon('res/compile_all.png'), 'Run All', self)
 
     def setupMenuFile(self, menu):
         """Setup a particular set of actions and its menus"""
@@ -275,6 +279,12 @@ class MainWindow(QMainWindow):
         menu.addAction(self.actionDockSummarized)
 
         menu.triggered.connect(self.menuViewHandler)
+
+    def setupMenuRun(self, menu):
+        """Setup menu run"""
+        menu.addAction(self.actionRun);
+        menu.addAction(self.actionRunAll)
+        menu.triggered.connect(self.menuRunHandler)
 
     def setupMenuOptions(self, menu):
         menu.addAction(self.actionSummaryMode)
@@ -431,9 +441,9 @@ class MainWindow(QMainWindow):
     def setupDockOutput(self):
         self.dockOutput = QDockWidget(self)
         self.dockOutputContents = QWidget()
-        text = QPlainTextEdit(self.dockOutputContents)
+        self.outputProgramText = QPlainTextEdit(self.dockOutputContents)
         layout = QVBoxLayout(self.dockOutputContents)
-        layout.addWidget(text)
+        layout.addWidget(self.outputProgramText)
         self.dockOutput.setWidget(self.dockOutputContents)
         self.dockOutput.setWindowTitle('Output')
         self.addDockWidget(Qt.RightDockWidgetArea, self.dockOutput)
@@ -498,6 +508,25 @@ class MainWindow(QMainWindow):
         signal = sender.text()
         if signal == 'Summary Mode':
             self.setMarkingSummaryMode(sender.isChecked())
+
+    def menuRunHandler(self, sender):
+        signal = sender.text()
+        if signal == 'Run':
+            if self.currentFile == '':
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText('No file found')
+                msg.setInformativeText('Open a file first')
+                msg.setWindowTitle('No file found')
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+                return False
+            
+            programOut = self.runProgram(self.currentFile)
+            self.outputProgramText.setPlainText(programOut)
+
+        elif signal == 'Run All':
+            print('run all')
 
     def openFolder(self):
         """Start a marking project"""
@@ -569,8 +598,27 @@ class MainWindow(QMainWindow):
             self.textedit.setText(cFile.read())
             cFile.close()
 
+            self.currentFile = cFileDir
+
         except Exception as e:
             print(e)
+
+    def runProgram(self, cFile):
+        tempdir = './temp/'
+        if not os.path.exists(tempdir):
+            os.makedirs(tempdir)
+        
+        subprocess.run('gcc ' + cFile + ' -o ./temp/out.exe')
+        result = subprocess.run(
+            'temp\\out.exe',
+            input = '\n'.encode('utf-8'),
+            shell = True
+        )
+
+        # TODO: wrong implementation:
+        # Use this instead:
+        # https://stackoverflow.com/questions/2502833/store-output-of-subprocess-popen-call-in-a-string
+        return str(result)
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""

@@ -249,6 +249,10 @@ class MainWindow(QMainWindow):
         self.actionSummaryMode.setCheckable(True)
         self.actionSummaryMode.setShortcut('Ctrl+M')
 
+        # Compile actions
+        self.actionRun = QAction('Run current', self)
+        self.actionRunAll = QAction('Run all', self)
+
     def setupMenuFile(self, menu):
         """Setup a particular set of actions and its menus"""
         # Add menu actions to menu
@@ -282,6 +286,11 @@ class MainWindow(QMainWindow):
         self.tbFiles.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.tbFiles.addAction(self.actionOpenFolder)
         self.tbFiles.addAction(self.actionQuit)
+
+        self.tbRun = self.addToolBar('Run')
+        self.tbRun.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.tbRun.addAction(self.actionRun)
+        self.tbRun.addAction(self.actionRunAll)
 
     def setupDocks(self):
         """Setup dockable widgets"""

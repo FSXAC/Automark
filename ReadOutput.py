@@ -10,6 +10,16 @@ def readOutput(f):
     if not os.path.exists(tempdir):
         os.makedirs(tempdir)
 
+    # remove system pause
+    tf = open(f, 'r')
+    lines = tf.readlines()
+    tf.close()
+    tf = open(f, 'w')
+    for line in lines:
+        if 'system("PAUSE");' not in line:
+            tf.write(line)
+    tf.close()
+
     subprocess.run('gcc ' + f + ' -o ./temp/out.exe')
 
     # Method 1: (will have to remove all the 'system pause')
@@ -29,8 +39,11 @@ def readOutput(f):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-    inputdata = "Muchen\n\n".encode('utf-8')
+    inputdata = "Muchen\n".encode('utf-8')
     stdoutdata, stderrdata = process.communicate(input=inputdata)
+    stdoutdata = str(stdoutdata)
+    stdoutdata = stdoutdata.replace('b\'', '')
+    stdoutdata = stdoutdata.replace('\\r\\n', '\r\n')
     print(stdoutdata)
 
     # Delete the temorary folder

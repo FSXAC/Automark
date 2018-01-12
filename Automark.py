@@ -3,6 +3,7 @@
 import sys
 import os
 import subprocess
+from time import sleep
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
@@ -608,17 +609,27 @@ class MainWindow(QMainWindow):
         if not os.path.exists(tempdir):
             os.makedirs(tempdir)
         
+        # Compile the file first
         subprocess.run('gcc ' + cFile + ' -o ./temp/out.exe')
-        result = subprocess.run(
-            'temp\\out.exe',
-            input = '\n'.encode('utf-8'),
-            shell = True
-        )
 
-        # TODO: wrong implementation:
-        # Use this instead:
-        # https://stackoverflow.com/questions/2502833/store-output-of-subprocess-popen-call-in-a-string
-        return str(result)
+        # Get program output
+        process = subprocess.Popen(
+            ['temp\\out.exe'],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        
+        # TODO: hack
+        sleep(0.5)
+        input_data = "Muchen\n".encode('utf-8')
+        out_data = process.communicate(input=input_data)[0]
+
+        sleep(0.5)
+        input_data = "\n".encode('utf-8')
+        out_data += process.communicate(input=input_data)[0]
+        return str(out_data)
+
 
 class Validator:
     """This class is instantiated to check if current directory contains the right files"""

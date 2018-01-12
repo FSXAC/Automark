@@ -22,5 +22,6 @@ int main(void) {
     scanf("%s", name);
     printf("\nHello, %s, welcome to APSC 160!\n\n", name);
 
+    system("PAUSE");
     return 0;
 }

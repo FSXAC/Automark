@@ -11,14 +11,14 @@ def readOutput(f):
         os.makedirs(tempdir)
 
     # remove system pause
-    tf = open(f, 'r')
-    lines = tf.readlines()
-    tf.close()
-    tf = open(f, 'w')
-    for line in lines:
-        if 'system("PAUSE");' not in line:
-            tf.write(line)
-    tf.close()
+    # tf = open(f, 'r')
+    # lines = tf.readlines()
+    # tf.close()
+    # tf = open(f, 'w')
+    # for line in lines:
+    #     if 'system("PAUSE");' not in line:
+    #         tf.write(line)
+    # tf.close()
 
     subprocess.run('gcc ' + f + ' -o ./temp/out.exe')
 
@@ -33,18 +33,24 @@ def readOutput(f):
     # process.communicate(input='\n')
 
     # Method 2 Attemp 2:
-    process = subprocess.Popen(
-        ['temp\\out.exe'],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    inputdata = "Muchen\n".encode('utf-8')
-    stdoutdata, stderrdata = process.communicate(input=inputdata)
-    stdoutdata = str(stdoutdata)
-    stdoutdata = stdoutdata.replace('b\'', '')
-    stdoutdata = stdoutdata.replace('\\r\\n', '\r\n')
-    print(stdoutdata)
+    # process = subprocess.Popen(
+    #     ['temp\\out.exe'],
+    #     stdin=subprocess.PIPE,
+    #     stdout=subprocess.PIPE,
+    #     stderr=subprocess.PIPE
+    # )
+    # inputdata = "Muchen\n".encode('utf-8')
+    # stdoutdata, stderrdata = process.communicate(input=inputdata)
+    # stdoutdata = str(stdoutdata)
+    # stdoutdata = stdoutdata.replace('b\'', '')
+    # stdoutdata = stdoutdata.replace('\\r\\n', '\r\n')
+    # print(stdoutdata)
+
+    # Method 3
+    # os.system('temp\\out.exe')
+
+    # Method 4
+    rc = subprocess.call('start temp\\out.exe', shell=True)
 
     # Delete the temorary folder
     shutil.rmtree(tempdir)

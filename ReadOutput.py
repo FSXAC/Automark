@@ -15,13 +15,23 @@ def readOutput(f):
     # Method 1: (will have to remove all the 'system pause')
     # result = subprocess.run('a.exe', stdout=subprocess.PIPE, input='\n'.encode('utf-8'))
     # result = subprocess.run('a.exe', input='\n'.encode('utf-8'))
-    result = subprocess.run('temp\\out.exe', input='\n'.encode('utf-8'), shell=True)
+    # result = subprocess.run('temp\\out.exe', input='\n'.encode('utf-8'), shell=True)
+    # print(result)
 
     # Method 2:
     # process = subprocess.Popen(['a.exe'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
     # process.communicate(input='\n')
 
-    print(result)
+    # Method 2 Attemp 2:
+    process = subprocess.Popen(
+        ['temp\\out.exe'],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    inputdata = "Muchen\n\n".encode('utf-8')
+    stdoutdata, stderrdata = process.communicate(input=inputdata)
+    print(stdoutdata)
 
     # Delete the temorary folder
     shutil.rmtree(tempdir)

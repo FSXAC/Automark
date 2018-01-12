@@ -9,10 +9,10 @@ TESTDIR = './Tests/'
 DELETE_FILES = True
 SUMMARY = True
 LETTERS = 'abcdefghijklmnnopqrstuvwxyz'
-N = 10
+N = 3
 
 def generateID():
-    return(random.randint(10000000, 99999999))
+    return str(random.randint(10000000, 99999999))
 
 def generateCSID():
     csid = ''
@@ -24,23 +24,55 @@ def generateCSID():
     return csid
 
 def generateName():
-    return 'Muchen He'
+    firstName = random.choice(
+        ['Abi', 'Braden', 'Cindy', 'David', 'Eleven', 'Finn',
+        'Greg', 'Hillary', 'Ivy', 'Jacob', 'Kyle', 'Liam', 'Michael',
+        'Noah', 'Opera', 'Pearl', 'Qing', 'Reese', 'Stanley', 'Thomas',
+        'Victor', 'Wang', 'Xing', 'Yorkie', 'Zhang']
+    )
+    lastName = random.choice([
+        'Alexander', 'Bitcon', 'Conbace', 'Deng', 'Feng', 'Genning', 'Henning',
+        'Irving', 'Jackson', 'Koerner', 'Lincoln', 'Moira', 'Nassal', 'Olafmeister',
+        'Pawleski', 'Quan', 'Romeo', 'Sombra', 'Tokyo', 'Unibaba', 'Volkov', 'Wang',
+        'Xuan', 'Yaun', 'Zhang'
+    ])
+    return firstName + ' ' + lastName
+
+def generateDateForm():
+    df = random.choice([
+        '2017 01 15', '2017-01-15', '01-15-2017', 'Jan 15 2017',
+        'Jan 15, 2017', 'Jan-15, 2017', '2017 Jan 15', '2017-Jan-15'
+    ])
+    return df
 
 def generateCFile():
-    code = """
+    code = """/*
+ * Author: """ + generateName() + """
+ * Student Number: """ + generateID() + """
+ * Lab Section: L2L
+ * Date: 2017 01 15
+ * Purpose: Prompts the user for his/her name and prints
+ * a welcome message on the screen.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#define N 4
+/* Constants */
+#define MAX_NAME_LENGTH 100
 
 int main(void) {
-    printf("%d %d %d\\n", N, 3, 2);
+    char name[MAX_NAME_LENGTH];
+
+    printf("Please enter your first name: ");
+    scanf("%s", name);
+    printf("\\nHello, %s, welcome to APSC 160!\\n\\n", name);
+
     system("PAUSE");
     return 0;
-}
-    """
+}"""
     return code
 
 def generateReadme():

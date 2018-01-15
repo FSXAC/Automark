@@ -13,6 +13,7 @@ from PyQt5.QtCore import QRegularExpression
 
 # Importing custom classes
 import Highlighter
+import CodeEdit
 
 # Global constants
 VERSION_NO = 'v0.2'

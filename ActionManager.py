@@ -48,4 +48,3 @@ class ActionManager():
 
         # Compilation actions
         self.act_compile_run = self.create_action('Compile and Run')
-        

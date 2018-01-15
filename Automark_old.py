@@ -89,36 +89,6 @@ class Highlighter(QSyntaxHighlighter):
                 match = matchIterator.next()
                 self.setFormat(match.capturedStart(), match.capturedLength(), matchFormat)
 
-        # Highlight multiline comments
-
-        # Set current block state to 0
-        # where 0 is outside a block comment and 1 is inside
-        # self.setCurrentBlockState(0)
-
-        # startIndex = 0
-        # if self.previousBlockState() != 1:
-        #     # startIndex = text.index(self.multiLineCommentStartRegex)
-
-        #     matchIterator = self.multiLineCommentStartRegex.globalMatch(text)
-        #     if matchIterator.hasNext():
-        #         match = matchIterator.next()
-        #         startIndex = match.capturedStart()
-
-        # while startIndex > 0:
-        #     match = self.multiLineCommentEndRegex.match(text, startIndex)
-        #     endIndex = match.capturedStart()
-        #     commentLength = 0
-        #     if endIndex == -1:
-        #         self.setCurrentBlockState(1)
-        #         commentLength = text.length() - startIndex
-        #     else:
-        #         commentLength = endIndex - startIndex + match.capturedLength()
-        
-        #     # set format for block
-        #     self.setFormat(startIndex, commentLength, self.multiLineCommentFormat)
-        #     startIndex = text.index(self.multiLineCommentStartRegex, startIndex + commentLength)
-
-
 class CodeEdit(QTextEdit):
     def __init__(self):
         super().__init__()

@@ -67,7 +67,7 @@ class Highlighter(QSyntaxHighlighter):
         single_comment_format.setForeground(Qt.gray)
         self.add_patterns(['\/\/[^\n]*'], single_comment_format)
     
-    def highlighBlock(self, text):
+    def highlightBlock(self, text):
         """Overrides the highlight block function in Qt"""
         for rule in self.highlighting_rules:
             match_format = self.highlighting_rules[rule]

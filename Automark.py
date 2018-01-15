@@ -14,6 +14,7 @@ from PyQt5.QtCore import QRegularExpression
 # Importing custom classes
 import Highlighter
 import CodeEdit
+from SummaryTreeView import SummaryTreeView, SummaryTreeModel
 
 # Global constants
 VERSION_NO = 'v0.2'

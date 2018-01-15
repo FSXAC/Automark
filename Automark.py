@@ -16,7 +16,7 @@ from Highlighter import *
 from CodeEdit import *
 # import SummaryTreeModel
 # import SummaryTreeView
-# import ActionManager
+from ActionManager import *
 
 # Global constants
 VERSION_NO = 'v0.2'
@@ -28,10 +28,13 @@ class MainWindow(QMainWindow):
 
     def setupUi(self):
         """Initializes the UI componenets for the main window"""
+        # Actions
+        self.action_manager = ActionManager(self)
 
         # Menu bar and status bar
         self.setMenuBar(QMenuBar(self))
         self.setStatusBar(QStatusBar(self))
+        self.create_menus()
 
         # Set central widget to textedit with highlighter
         self.text_edit = CodeEdit()
@@ -39,8 +42,53 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.text_edit)
 
         # Show window
+        self.setWindowTitle('Automark ' + VERSION_NO)
         self.resize(1440, 800)
         self.show()
+
+    def create_menus(self):
+        """Creates the menus for the main app"""
+
+        # Lambda expression for quickly getting a new menu
+        new_menu = lambda name: self.menuBar().addMenu(name)
+
+        # Closure for populating menu with actions
+        def populate_menu(menu, action_list, signal_handler):
+            """ Given a menu, populate the menu with actions and connect to a signal handler"""
+            
+            # Iterate through action list and add them to the menus
+            for action in action_list:
+                if action == '/':
+                    # Separator
+                    menu.addSeparator()
+                else:
+                    # Valid action
+                    menu.addAction(action)
+
+            # Add a signal handler to the menu
+            menu.triggered.connect(signal_handler)
+
+        # Actually go and make the menus
+        populate_menu(
+            new_menu('&File'),
+            self.action_manager.get_file_actions(),
+            self.default_menu_handler
+        )
+        populate_menu(
+            new_menu('&View'),
+            self.action_manager.get_view_actions(),
+            self.default_menu_handler
+        )
+        populate_menu(
+            new_menu('&Run'),
+            self.action_manager.get_run_actions(),
+            self.default_menu_handler
+        )
+
+    def default_menu_handler(self, sender):
+        """Temporary default menu handler"""
+        print(sender.text())
+
 
 # Run the app
 app = QApplication(sys.argv)

@@ -30,12 +30,12 @@ class ActionManager():
             new_action.setShortcut(shortcut)
         if icon != '':
             action_icon = QIcon(icon)
-            new_action.seticon(action_icon)
+            new_action.setIcon(action_icon)
         return new_action
 
     def make_actions(self):
-        """ Instantiates all the necessary actions required to run the app"""
-        
+        """Instantiates all the necessary actions required to run the app"""
+
         # File actions
         self.act_open_folder = self.create_action('&Open Folders', icon='hi.png', shortcut='Ctrl+O')
         self.act_quit = self.create_action('&Quit', shortcut='Ctrl+Q')
@@ -48,3 +48,29 @@ class ActionManager():
 
         # Compilation actions
         self.act_compile_run = self.create_action('Compile and Run')
+
+    def get_file_actions(self):
+        """Returns a set of actions that needs to be populated in the File menu"""
+        return_list = [
+            self.act_open_folder,
+            '/',
+            self.act_quit
+        ]
+        return return_list
+
+    def get_view_actions(self):
+        """Returns a set of actions that needs to be populated in the View menu"""
+        return_list = [
+            self.act_view_summary,
+            self.act_view_submission,
+            self.act_view_note,
+            self.act_view_verdict
+        ]
+        return return_list
+
+    def get_run_actions(self):
+        """Returns a set of actions that needs to be populated in the Run menu"""
+        return_list = [
+            self.act_compile_run
+        ]
+        return return_list

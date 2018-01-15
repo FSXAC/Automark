@@ -37,7 +37,7 @@ class SummaryTreeView(QTreeView):
 
     def add_entry(self, sid, status):
         """Add a single entry to the tree model"""
-        if self.model() is not SummaryTreeModel:
+        if self.model() is None:
             return
 
         self.model().add_entry(sid, status)

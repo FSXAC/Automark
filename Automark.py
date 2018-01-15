@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):
         self.setMenuBar(QMenuBar(self))
         self.setStatusBar(QStatusBar(self))
         self.create_menus()
+        self.create_toolbars()
 
         # Set central widget to textedit with highlighter
         self.text_edit = CodeEdit()
@@ -54,7 +55,7 @@ class MainWindow(QMainWindow):
 
         # Closure for populating menu with actions
         def populate_menu(menu, action_list, signal_handler):
-            """ Given a menu, populate the menu with actions and connect to a signal handler"""
+            """Given a menu, populate the menu with actions and connect to a signal handler"""
             
             # Iterate through action list and add them to the menus
             for action in action_list:
@@ -85,6 +86,29 @@ class MainWindow(QMainWindow):
             self.default_menu_handler
         )
 
+    def create_toolbars(self):
+        """Creates the toolbars for the main app"""
+
+        # Assuming that every action in a tool bar already
+        # exists in a menu
+        def populate_toolbar(toolbar, action_list):
+            """Given a toolbar, popuate it with actions"""
+
+            for action in action_list:
+                if action == '/':
+                    # Separator
+                    toolbar.addSeparator()
+                else:
+                    toolbar.addAction(action)
+
+            # Apply toolbar style
+            toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        
+        # Make actual toolbars
+        populate_toolbar(self.addToolBar('Files'), self.action_manager.get_file_actions())
+        populate_toolbar(self.addToolBar('Run'), self.action_manager.get_run_actions())
+
+    # HANDLERS AND SLOTS
     def default_menu_handler(self, sender):
         """Temporary default menu handler"""
         print(sender.text())

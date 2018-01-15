@@ -41,24 +41,3 @@ class SummaryTreeView(QTreeView):
             return
 
         self.model().add_entry(sid, status)
-
-class SummaryTreeModel(QStandardItemModel):
-    """Custom standard item model for submissions"""
-
-    # Index enumeration
-    SID, STATUS = range(2)
-
-    def __init__(self, col, row, parent=None):
-        """Constructor"""
-        super().__init__(col, row, parent)
-
-        # Set headers
-        self.setHeaderData(self.SID, Qt.Horizontal, 'ID')
-        self.setHeaderData(self.STATUS, Qt.Horizontal, 'Status')
-
-    def add_entry(self, sid, status):
-        self.insertRow(0)
-        self.setData(self.model().index(0, self.SID), sid)
-        self.setData(self.model().index(0, self.STATUS), status)
-        self.item(0, self.SiD).setEditable(False)
-        self.item(0, self.STATUS).setEditable(False)

@@ -14,7 +14,18 @@ from PyQt5.QtCore import QRegularExpression
 # Importing custom classes
 import Highlighter
 import CodeEdit
-from SummaryTreeView import SummaryTreeView, SummaryTreeModel
+import SummaryTreeModel
+import SummaryTreeView
+import ActionManager
 
 # Global constants
 VERSION_NO = 'v0.2'
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi()
+
+    def setupUi(self):
+        """Initializes the UI componenets for the main window"""
+        

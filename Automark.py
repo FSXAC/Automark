@@ -14,8 +14,6 @@ from PyQt5.QtCore import QRegularExpression
 # Importing custom classes
 from Highlighter import *
 from CodeEdit import *
-# import SummaryTreeModel
-# import SummaryTreeView
 from ActionManager import *
 from Docked import *
 
@@ -114,6 +112,7 @@ class MainWindow(QMainWindow):
 
     def create_docked_widgets(self):
         """Make docked widgets"""
+        self.summary_dock = SummaryDock(self)
         self.submission_dock = SubmissionDock(self)
         self.verdict_dock = VerdictDock(self)
 

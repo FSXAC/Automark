@@ -26,6 +26,31 @@ class CustomDock():
         """Add the current docked widget to the main window"""
         self.parent.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
 
+class SummaryDock(CustomDock):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def setupUi(self):
+        cdLabel = QLabel(self.content)
+        cdLabel.setText('Current Directory')
+        cdURL = QLineEdit(self.content)
+        cdURL.setReadOnly(True)
+        cdContainer = QHBoxLayout()
+        cdContainer.addWidget(cdLabel)
+        cdContainer.addWidget(cdURL)
+        vLayout = QVBoxLayout(self.content)
+        vLayout.addLayout(cdContainer)
+
+        # self.summaryTree = SummaryTree()
+        # self.summaryTree.summarySelected.connect(self.summaryOpenHandler)
+        # vLayout.addWidget(self.summaryTree)
+
+        self.dock.setWidget(self.content)
+        self.dock.setWindowTitle('Submissions Summary')
+
+    def add_to_parent(self):
+        self.parent.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
+
 class SubmissionDock(CustomDock):
     def __init__(self, parent):
         super().__init__(parent)

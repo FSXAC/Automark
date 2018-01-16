@@ -8,6 +8,7 @@ import subprocess
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
+from SummaryTree import *
 
 class CustomDock():
     def __init__(self, parent):
@@ -31,19 +32,27 @@ class SummaryDock(CustomDock):
         super().__init__(parent)
 
     def setupUi(self):
-        cdLabel = QLabel(self.content)
-        cdLabel.setText('Current Directory')
-        cdURL = QLineEdit(self.content)
-        cdURL.setReadOnly(True)
-        cdContainer = QHBoxLayout()
-        cdContainer.addWidget(cdLabel)
-        cdContainer.addWidget(cdURL)
-        vLayout = QVBoxLayout(self.content)
-        vLayout.addLayout(cdContainer)
+        cd_label = QLabel(self.content)
+        cd_label.setText('Current Directory')
+        cd_url = QLineEdit(self.content)
+        cd_url.setReadOnly(True)
+        cd_container = QHBoxLayout()
+        cd_container.addWidget(cd_label)
+        cd_container.addWidget(cd_url)
+        v_layout = QVBoxLayout(self.content)
+        v_layout.addLayout(cd_container)
 
         # self.summaryTree = SummaryTree()
         # self.summaryTree.summarySelected.connect(self.summaryOpenHandler)
-        # vLayout.addWidget(self.summaryTree)
+        # v_layout.addWidget(self.summaryTree)
+        self.summary_tree_view = SummaryTreeView()
+        self.summary_tree_model = SummaryTreeModel(2, 0, self.summary_tree_view)
+        self.summary_tree_view.setModel(self.summary_tree_model)
+        self.summary_tree_view.selected.connect(
+            lambda x: print(x)
+        )
+        v_layout.addWidget(self.summary_tree_view)
+
 
         self.dock.setWidget(self.content)
         self.dock.setWindowTitle('Submissions Summary')

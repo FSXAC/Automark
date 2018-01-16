@@ -17,6 +17,7 @@ from CodeEdit import *
 # import SummaryTreeModel
 # import SummaryTreeView
 from ActionManager import *
+from Docked import *
 
 # Global constants
 VERSION_NO = 'v0.2'
@@ -42,6 +43,9 @@ class MainWindow(QMainWindow):
         self.highlighter = Highlighter(self.text_edit.document())
         self.setCentralWidget(self.text_edit)
 
+        # Create docked widgets
+        self.create_docked_widgets()
+
         # Show window
         self.setWindowTitle('Automark ' + VERSION_NO)
         self.resize(1440, 800)
@@ -56,7 +60,7 @@ class MainWindow(QMainWindow):
         # Closure for populating menu with actions
         def populate_menu(menu, action_list, signal_handler):
             """Given a menu, populate the menu with actions and connect to a signal handler"""
-            
+
             # Iterate through action list and add them to the menus
             for action in action_list:
                 if action == '/':
@@ -103,10 +107,15 @@ class MainWindow(QMainWindow):
 
             # Apply toolbar style
             toolbar.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        
+
         # Make actual toolbars
         populate_toolbar(self.addToolBar('Files'), self.action_manager.get_file_actions())
         populate_toolbar(self.addToolBar('Run'), self.action_manager.get_run_actions())
+
+    def create_docked_widgets(self):
+        """Make docked widgets"""
+        self.submission_dock = SubmissionDock(self)
+        self.verdict_dock = VerdictDock(self)
 
     # HANDLERS AND SLOTS
     def default_menu_handler(self, sender):

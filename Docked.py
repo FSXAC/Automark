@@ -42,16 +42,20 @@ class SummaryDock(CustomDock):
         v_layout = QVBoxLayout(self.content)
         v_layout.addLayout(cd_container)
 
-        # self.summaryTree = SummaryTree()
-        # self.summaryTree.summarySelected.connect(self.summaryOpenHandler)
-        # v_layout.addWidget(self.summaryTree)
-        self.summary_tree_view = SummaryTreeView()
-        self.summary_tree_model = SummaryTreeModel(2, 0, self.summary_tree_view)
-        self.summary_tree_view.setModel(self.summary_tree_model)
+        self.summary_tree_view = SummaryTree()
         self.summary_tree_view.selected.connect(
             lambda x: print(x)
         )
         v_layout.addWidget(self.summary_tree_view)
+
+        # self.summary_tree_view = SummaryTreeView()
+        # self.summary_tree_model = SummaryTreeModel(2, 0, self.summary_tree_view)
+
+        # self.summary_tree_view.setModel(self.summary_tree_model)
+        # self.summary_tree_view.selected.connect(
+        #     lambda x: print(x)
+        # )
+        # v_layout.addWidget(self.summary_tree_view)
 
 
         self.dock.setWidget(self.content)

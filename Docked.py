@@ -110,11 +110,31 @@ class SubmissionDock(CustomDock):
     def add_to_parent(self):
         """Add the current docked widget to the main window"""
         self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
-        # self.dock.visibilityChanged.connect(
-        #     lambda vis: self.parent.docked_visibility(
-        #     )
-        # )
-        # TODO: Some kind of signal management
+
+class NoteDock(CustomDock):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+    def setupUi(self):
+        layout = QVBoxLayout(self.content)
+        text_edit = QTextEdit()
+        text_edit.setReadOnly(True)
+        text_edit.setText('Submission\'s "info.txt" will be displayed here')
+
+        font = QFont()
+        font.setFamily('Courier New')
+        font.setFixedPitch(True)
+        font.setPointSize(8)
+        text_edit.setFont(font)
+
+        layout.addWidget(text_edit)
+        self.dock.setWidget(self.content)
+        self.dock.setWindowTitle('Notes')
+    
+    def add_to_parent(self):
+        """Add current docked window to main window"""
+        self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+
 
 class VerdictDock(CustomDock):
     def __init__(self, parent):

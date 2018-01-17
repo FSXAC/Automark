@@ -114,11 +114,13 @@ class MainWindow(QMainWindow):
         """Make docked widgets"""
         self.summary_dock = SummaryDock(self)
         self.submission_dock = SubmissionDock(self)
+        self.note_dock = NoteDock(self)
         self.verdict_dock = VerdictDock(self)
 
         # Connect dock signals to actions (that need to be updated)
         self.summary_dock.connect_visiblity_action(self.action_manager.act_view_summary.setChecked)
         self.submission_dock.connect_visiblity_action(self.action_manager.act_view_submission.setChecked)
+        self.note_dock.connect_visiblity_action(self.action_manager.act_view_note.setChecked)
         self.verdict_dock.connect_visiblity_action(self.action_manager.act_view_verdict.setChecked)
 
     # HANDLERS AND SLOTS
@@ -139,7 +141,7 @@ class MainWindow(QMainWindow):
         elif signal == ACT_VIEW_SUBMISSION:
             self.submission_dock.set_visible(visible)
         elif signal == ACT_VIEW_NOTE:
-            print("TODO:")
+            self.note_dock.set_visible(visible)
         elif signal == ACT_VIEW_VERDICT:
             self.verdict_dock.set_visible(visible)
 

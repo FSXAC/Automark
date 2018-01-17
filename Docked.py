@@ -27,6 +27,14 @@ class CustomDock():
         """Add the current docked widget to the main window"""
         self.parent.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
 
+    def set_visible(self, visibility):
+        """Sets visiblity of the custom dock"""
+        self.dock.setVisible(visibility)
+
+    def connect_visiblity_action(self, action_slot):
+        """Connect the visible event to view action"""
+        self.dock.visibilityChanged.connect(action_slot)
+
 class SummaryDock(CustomDock):
     def __init__(self, parent):
         super().__init__(parent)
@@ -47,16 +55,6 @@ class SummaryDock(CustomDock):
             lambda x: print(x)
         )
         v_layout.addWidget(self.summary_tree_view)
-
-        # self.summary_tree_view = SummaryTreeView()
-        # self.summary_tree_model = SummaryTreeModel(2, 0, self.summary_tree_view)
-
-        # self.summary_tree_view.setModel(self.summary_tree_model)
-        # self.summary_tree_view.selected.connect(
-        #     lambda x: print(x)
-        # )
-        # v_layout.addWidget(self.summary_tree_view)
-
 
         self.dock.setWidget(self.content)
         self.dock.setWindowTitle('Submissions Summary')

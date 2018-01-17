@@ -75,12 +75,12 @@ class MainWindow(QMainWindow):
         populate_menu(
             new_menu('&File'),
             self.action_manager.get_file_actions(),
-            self.default_menu_handler
+            self.file_menu_handler
         )
         populate_menu(
             new_menu('&View'),
             self.action_manager.get_view_actions(),
-            self.default_menu_handler
+            self.view_menu_handler
         )
         populate_menu(
             new_menu('&Run'),
@@ -116,7 +116,33 @@ class MainWindow(QMainWindow):
         self.submission_dock = SubmissionDock(self)
         self.verdict_dock = VerdictDock(self)
 
+        # Connect dock signals to actions (that need to be updated)
+        self.summary_dock.connect_visiblity_action(self.action_manager.act_view_summary.setChecked)
+        self.submission_dock.connect_visiblity_action(self.action_manager.act_view_submission.setChecked)
+        self.verdict_dock.connect_visiblity_action(self.action_manager.act_view_verdict.setChecked)
+
     # HANDLERS AND SLOTS
+    def file_menu_handler(self, sender):
+        """Handles events from the file menu and its corresponding actions"""
+        signal = sender.text()
+        if signal == ACT_OPEN_FOLDER:
+            print('Open folder')
+        elif signal == ACT_QUIT:
+            qApp.quit()
+
+    def view_menu_handler(self, sender):
+        """Handles actions related to views"""
+        signal = sender.text()
+        visible = sender.isChecked()
+        if signal == ACT_VIEW_SUMMARY:
+            self.summary_dock.set_visible(visible)
+        elif signal == ACT_VIEW_SUBMISSION:
+            self.submission_dock.set_visible(visible)
+        elif signal == ACT_VIEW_NOTE:
+            print("TODO:")
+        elif signal == ACT_VIEW_VERDICT:
+            self.verdict_dock.set_visible(visible)
+
     def default_menu_handler(self, sender):
         """Temporary default menu handler"""
         print(sender.text())

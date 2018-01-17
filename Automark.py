@@ -128,7 +128,8 @@ class MainWindow(QMainWindow):
         """Handles events from the file menu and its corresponding actions"""
         signal = sender.text()
         if signal == ACT_OPEN_FOLDER:
-            print('Open folder')
+            # print('Open folder')
+            self.open_folder()
         elif signal == ACT_QUIT:
             qApp.quit()
 
@@ -149,6 +150,22 @@ class MainWindow(QMainWindow):
         """Temporary default menu handler"""
         print(sender.text())
 
+    def open_folder(self):
+        """Opens a directory to be marked"""
+        fdir = QFileDialog.getExistingDirectory(
+            self, 'Select Folder', os.getenv('HOME'),
+            QFileDialog.DontResolveSymlinks | QFileDialog.ShowDirsOnly
+        )
+
+        if fdir == '':
+            return
+
+        # Create a new project with that directory
+        # TODO: Make project
+
+
+        # Let the user know
+        self.statusBar().showMessage('Opened at ' + fdir)
 
 # Run the app
 app = QApplication(sys.argv)

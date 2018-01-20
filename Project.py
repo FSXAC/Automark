@@ -3,6 +3,7 @@ Project wrapper
 """
 
 import os
+import subprocess
 
 PROJ_EMPTY_PATH = 'emptypath'
 PROJ_EMPTY_DIR = 'emptydir'
@@ -73,7 +74,16 @@ class Project():
 
         return info
 
-    def compile(self):
+    def compile_and_run(self):
         """Try to compile the current file"""
-        print('Compile this: ' + self.rootdir + '/' + 'temp' + '/' + self.current_id + '.c')
+        try:
+            source = (self.rootdir + '/' + self.current_id + '.c').replace('/', '\\')
+            out = (self.rootdir + '/' + self.current_id + '.exe').replace('/', '\\')
+            command = 'gcc ' + source + ' -o ' + out
+            subprocess.run(command)
+            subprocess.call('start ' + out, shell=True)
 
+            # Delete the exe file
+            os.remove(out)
+        except Exception as compile_exception:
+            print(compile_exception)

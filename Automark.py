@@ -156,7 +156,7 @@ class MainWindow(QMainWindow):
         """Run menu hander"""
         signal = sender.text()
         if signal == ACT_COMPILE_RUN:
-            self.project.compile()
+            self.project.compile_and_run()
 
     def default_menu_handler(self, sender):
         """Temporary default menu handler"""

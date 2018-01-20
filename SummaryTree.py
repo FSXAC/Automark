@@ -28,7 +28,6 @@ class SummaryTree(QTreeView):
 
     def item_select_event(self, model_index):
         item = self.model().item(model_index.row())
-        print(item.text())
         self.selected.emit(item.text())
     
     def add_entry(self, sid, status):
@@ -40,3 +39,8 @@ class SummaryTree(QTreeView):
 
     def reset_model(self):
         self.setModel(self.create_summary_model())
+
+    def load_submissions(self, submissions):
+        self.reset_model()
+        for submission in submissions:
+            self.add_entry(submission, 'Unmarked')

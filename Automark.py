@@ -16,6 +16,7 @@ from Highlighter import *
 from CodeEdit import *
 from ActionManager import *
 from Docked import *
+from Project import *
 
 # Global constants
 VERSION_NO = 'v0.2'
@@ -24,6 +25,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi()
+
+        self.project = Project()
 
     def setupUi(self):
         """Initializes the UI componenets for the main window"""
@@ -123,6 +126,9 @@ class MainWindow(QMainWindow):
         self.note_dock.connect_visiblity_action(self.action_manager.act_view_note.setChecked)
         self.verdict_dock.connect_visiblity_action(self.action_manager.act_view_verdict.setChecked)
 
+        # Other signals
+        self.summary_dock.connect_selected(self.select_submission_handler)
+
     # HANDLERS AND SLOTS
     def file_menu_handler(self, sender):
         """Handles events from the file menu and its corresponding actions"""
@@ -161,11 +167,40 @@ class MainWindow(QMainWindow):
             return
 
         # Create a new project with that directory
-        # TODO: Make project
+        return_code = self.project.new_project(fdir)
+        if return_code == PROJ_EMPTY_PATH:
+            self.call_message_box(info=PROJ_EMPTY_PATH)
+            return
+        elif return_code == PROJ_EMPTY_DIR:
+            self.call_message_box(info='No files found in the directory')
+            return
+        elif return_code == PROJ_VALID:
+            print('Project directory loaded')
 
+        # Get submissions
+        self.summary_dock.summary_tree_view.load_submissions(self.project.get_submissions())
 
         # Let the user know
         self.statusBar().showMessage('Opened at ' + fdir)
+
+    def select_submission_handler(self, item):
+        print('main:' + item)
+
+    # UTILITY FUNCTIONS
+    def call_message_box(
+            self,
+            txt='Warning',
+            info='Something is wrong',
+            title='Warning'
+        ):
+        """Create a message box"""
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Warning)
+        msg.setText(txt)
+        msg.setInformativeText(info)
+        msg.setWindowTitle(title)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec_()
 
 # Run the app
 app = QApplication(sys.argv)

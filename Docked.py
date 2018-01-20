@@ -51,9 +51,6 @@ class SummaryDock(CustomDock):
         v_layout.addLayout(cd_container)
 
         self.summary_tree_view = SummaryTree()
-        self.summary_tree_view.selected.connect(
-            lambda x: print(x)
-        )
         v_layout.addWidget(self.summary_tree_view)
 
         self.dock.setWidget(self.content)
@@ -61,6 +58,13 @@ class SummaryDock(CustomDock):
 
     def add_to_parent(self):
         self.parent.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
+
+    def connect_selected(self, handler):
+        """Connect the signal to the slot"""
+        if self.summary_tree_view is None:
+            return
+
+        self.summary_tree_view.selected.connect(handler)
 
 class SubmissionDock(CustomDock):
     def __init__(self, parent):

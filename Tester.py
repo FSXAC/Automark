@@ -5,6 +5,7 @@ import shutil
 import random
 import string
 
+WRITE_INFO = False
 TESTDIR = './Tests/'
 DELETE_FILES = True
 SUMMARY = True
@@ -80,9 +81,10 @@ def generateReadme():
 
 
 def writeSummary():
-    f = open(TESTDIR + csID + '.txt', 'w')
-    f.write(generateReadme())
-    f.close()
+    if WRITE_INFO:
+        f = open(TESTDIR + csID + '.txt', 'w')
+        f.write(generateReadme())
+        f.close()
 
     f = open(TESTDIR + csID + '.c', 'w')
     f.write(generateCFile())

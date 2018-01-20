@@ -3,3 +3,4 @@ Tests/
 Tutorials/
 temp/
 __pycache__/
+.vscode/

@@ -42,3 +42,17 @@ class Project():
                 os.rename(old_filename, new_filename)
 
         return submissions
+
+    def get_submission_code(self, item):
+        """Returns the written code of the submission"""
+        source_filename = self.rootdir + '/' + item + '.c'
+        code = ''
+        try:
+            source = open(source_filename, 'r')
+            code = source.read()
+            source.close()
+        except Exception as file_io_exception:
+            print(file_io_exception)
+
+        return code
+

@@ -185,10 +185,8 @@ class MainWindow(QMainWindow):
 
     def select_submission_handler(self, item):
         """Handler for when a submission in the summary dock is clicked"""
-        # print('main:' + item)
-
-        # FIXME:
-        source_filename = self.project.rootdir + '/' + item + '.c'
+        self.text_edit.setText(self.project.get_submission_code(item))
+        # self.note_dock.
 
     # UTILITY FUNCTIONS
     def call_message_box(

@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         populate_menu(
             new_menu('&Run'),
             self.action_manager.get_run_actions(),
-            self.default_menu_handler
+            self.run_menu_handler
         )
 
     def create_toolbars(self):
@@ -152,6 +152,12 @@ class MainWindow(QMainWindow):
         elif signal == ACT_VIEW_VERDICT:
             self.verdict_dock.set_visible(visible)
 
+    def run_menu_handler(self, sender):
+        """Run menu hander"""
+        signal = sender.text()
+        if signal == ACT_COMPILE_RUN:
+            self.project.compile()
+
     def default_menu_handler(self, sender):
         """Temporary default menu handler"""
         print(sender.text())
@@ -185,8 +191,9 @@ class MainWindow(QMainWindow):
 
     def select_submission_handler(self, item):
         """Handler for when a submission in the summary dock is clicked"""
-        self.text_edit.setText(self.project.get_submission_code(item))
-        # self.note_dock.
+        self.project.set_submission(item)
+        self.text_edit.setText(self.project.get_submission_code())
+        self.note_dock.set_note(self.project.get_submission_note())
 
     # UTILITY FUNCTIONS
     def call_message_box(

@@ -15,6 +15,8 @@ ACT_VIEW_SUBMISSION = 'Submission'
 ACT_VIEW_NOTE = 'Note'
 ACT_VIEW_VERDICT = 'Verdict'
 
+ACT_COMPILE_RUN = 'Compile and Run'
+
 class ActionManager():
     def __init__(self, parent):
         """Constructor"""
@@ -56,7 +58,7 @@ class ActionManager():
         self.act_view_verdict = self.create_action('Verdict', checkable=True, checked=True)
 
         # Compilation actions
-        self.act_compile_run = self.create_action('Compile and Run')
+        self.act_compile_run = self.create_action(ACT_COMPILE_RUN)
 
     def get_file_actions(self):
         """Returns a set of actions that needs to be populated in the File menu"""

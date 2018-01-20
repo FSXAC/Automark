@@ -29,7 +29,7 @@ class SummaryTree(QTreeView):
     def item_select_event(self, model_index):
         item = self.model().item(model_index.row())
         self.selected.emit(item.text())
-    
+
     def add_entry(self, sid, status):
         self.model().insertRow(0)
         self.model().setData(self.model().index(0, self.SID), sid)

@@ -121,23 +121,27 @@ class NoteDock(CustomDock):
 
     def setupUi(self):
         layout = QVBoxLayout(self.content)
-        text_edit = QTextEdit()
-        text_edit.setReadOnly(True)
-        text_edit.setText('Submission\'s "info.txt" will be displayed here')
+        self.text_edit = QTextEdit()
+        self.text_edit.setReadOnly(True)
+        self.text_edit.setText('Submission\'s "info.txt" will be displayed here')
 
         font = QFont()
         font.setFamily('Courier New')
         font.setFixedPitch(True)
         font.setPointSize(8)
-        text_edit.setFont(font)
+        self.text_edit.setFont(font)
 
-        layout.addWidget(text_edit)
+        layout.addWidget(self.text_edit)
         self.dock.setWidget(self.content)
         self.dock.setWindowTitle('Notes')
     
     def add_to_parent(self):
         """Add current docked window to main window"""
         self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+
+    def set_note(self, note):
+        """Set the text of the text_edit that is suppose to be notes"""
+        self.text_edit.setText(note)
 
 
 class VerdictDock(CustomDock):

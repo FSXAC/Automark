@@ -12,6 +12,7 @@ class Project():
     """Class that wraps everything todo with each lab"""
     def __init__(self):
         self.rootdir = ''
+        self.current_id = ''
 
     def new_project(self, rootdir):
         """Validates the directory"""
@@ -43,9 +44,12 @@ class Project():
 
         return submissions
 
-    def get_submission_code(self, item):
+    def set_submission(self, item):
+        self.current_id = item
+
+    def get_submission_code(self):
         """Returns the written code of the submission"""
-        source_filename = self.rootdir + '/' + item + '.c'
+        source_filename = self.rootdir + '/' + self.current_id + '.c'
         code = ''
         try:
             source = open(source_filename, 'r')
@@ -55,4 +59,21 @@ class Project():
             print(file_io_exception)
 
         return code
+
+    def get_submission_note(self):
+        """Returns the note / info.txt of the submission"""
+        note_filename = self.rootdir + '/' + self.current_id + '.txt'
+        info = 'This submission did not have info.txt'
+        try:
+            note = open(note_filename, 'r')
+            info = note.read()
+            note.close()
+        except Exception as file_io_exception:
+            print(file_io_exception)
+
+        return info
+
+    def compile(self):
+        """Try to compile the current file"""
+        print('Compile this: ' + self.rootdir + '/' + 'temp' + '/' + self.current_id + '.c')
 

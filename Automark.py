@@ -184,7 +184,11 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('Opened at ' + fdir)
 
     def select_submission_handler(self, item):
-        print('main:' + item)
+        """Handler for when a submission in the summary dock is clicked"""
+        # print('main:' + item)
+
+        # FIXME:
+        source_filename = self.project.rootdir + '/' + item + '.c'
 
     # UTILITY FUNCTIONS
     def call_message_box(

@@ -19,7 +19,7 @@ from Docked import *
 from Project import *
 
 # Global constants
-VERSION_NO = 'v0.2'
+VERSION_NO = 'v0.3'
 
 class MainWindow(QMainWindow):
     def __init__(self):

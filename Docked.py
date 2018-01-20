@@ -2,12 +2,9 @@
 Docked windows wrapper
 """
 
-import sys
-import os
-import subprocess
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
+from PyQt5.QtGui import QFont
 from SummaryTree import *
 
 class CustomDock():
@@ -167,10 +164,10 @@ class VerdictDock(CustomDock):
             lambda x: sl_mark.setValue(sb_mark.value()))
 
         # Put all into grid
-        layout = QGridLayout(self.content)
-        layout.addWidget(l_mark, 0, 0, 1, 1)
-        layout.addWidget(sl_mark, 0, 1, 1, 1)
-        layout.addWidget(sb_mark, 0, 2, 1, 1)
+        self.layout = QGridLayout(self.content)
+        self.layout.addWidget(l_mark, 0, 0, 1, 1)
+        self.layout.addWidget(sl_mark, 0, 1, 1, 1)
+        self.layout.addWidget(sb_mark, 0, 2, 1, 1)
 
         # Add to window
         self.dock.setWidget(self.content)
@@ -179,3 +176,20 @@ class VerdictDock(CustomDock):
     def add_to_parent(self):
         """Add the current docked widget to the main window"""
         self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
+
+    def clear_rubric(self):
+        """Clears all the widget in the verdict"""
+        for i in reversed(range(self.layout.count())):
+            self.layout.itemAt(i).widget().deleteLater()
+
+    def load_rubric(self, rubric_file):
+        """Loads a rubric template from JSON"""
+
+        
+
+
+        self.clear_rubric()
+
+
+
+

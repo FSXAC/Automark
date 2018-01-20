@@ -1,5 +1,4 @@
 *.pyc
-Tests/
 Tutorials/
 temp/
 __pycache__/

@@ -17,6 +17,8 @@ ACT_VIEW_VERDICT = 'Verdict'
 
 ACT_COMPILE_RUN = 'Compile and Run'
 
+ACT_MARK_LOAD_RUBRIC = 'Load Rubric'
+
 class ActionManager():
     def __init__(self, parent):
         """Constructor"""
@@ -60,6 +62,9 @@ class ActionManager():
         # Compilation actions
         self.act_compile_run = self.create_action(ACT_COMPILE_RUN)
 
+        # Marking actions
+        self.act_mark_load_rubric = self.create_action(ACT_MARK_LOAD_RUBRIC)
+
     def get_file_actions(self):
         """Returns a set of actions that needs to be populated in the File menu"""
         return_list = [
@@ -83,5 +88,12 @@ class ActionManager():
         """Returns a set of actions that needs to be populated in the Run menu"""
         return_list = [
             self.act_compile_run
+        ]
+        return return_list
+
+    def get_marking_actions(self):
+        """Returns actions related to marking"""
+        return_list = [
+            self.act_mark_load_rubric
         ]
         return return_list

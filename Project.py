@@ -4,6 +4,7 @@ Project wrapper
 
 import os
 import subprocess
+import json
 
 PROJ_EMPTY_PATH = 'emptypath'
 PROJ_EMPTY_DIR = 'emptydir'
@@ -14,6 +15,8 @@ class Project():
     def __init__(self):
         self.rootdir = ''
         self.current_id = ''
+        self.rubric_file = ''
+        self.rubric = {}
 
     def new_project(self, rootdir):
         """Validates the directory"""
@@ -87,3 +90,15 @@ class Project():
             os.remove(out)
         except Exception as compile_exception:
             print(compile_exception)
+
+    def load_rubric(self, fname):
+        """Assign the rubric structure"""
+        try:
+            rubric_file = open(fname, 'r')
+            rubric = rubric_file.read()
+            rubric_file.close()
+        except Exception as file_io_exception:
+            print(file_io_exception)
+
+        self.rubric = json.loads(rubric)
+        print(self.rubric)

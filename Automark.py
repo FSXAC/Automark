@@ -90,6 +90,11 @@ class MainWindow(QMainWindow):
             self.action_manager.get_run_actions(),
             self.run_menu_handler
         )
+        populate_menu(
+            new_menu('&Marking'),
+            self.action_manager.get_marking_actions(),
+            self.marking_menu_handler
+        )
 
     def create_toolbars(self):
         """Creates the toolbars for the main app"""
@@ -112,6 +117,7 @@ class MainWindow(QMainWindow):
         # Make actual toolbars
         populate_toolbar(self.addToolBar('Files'), self.action_manager.get_file_actions())
         populate_toolbar(self.addToolBar('Run'), self.action_manager.get_run_actions())
+        populate_toolbar(self.addToolBar('Marking'), self.action_manager.get_marking_actions())
 
     def create_docked_widgets(self):
         """Make docked widgets"""
@@ -158,6 +164,13 @@ class MainWindow(QMainWindow):
         if signal == ACT_COMPILE_RUN:
             self.project.compile_and_run()
 
+    def marking_menu_handler(self, sender):
+        """Marking menu handler"""
+        signal = sender.text()
+        if signal == ACT_MARK_LOAD_RUBRIC:
+            # self.verdict_dock.clear_rubric()
+            self.open_rubric()
+
     def default_menu_handler(self, sender):
         """Temporary default menu handler"""
         print(sender.text())
@@ -194,6 +207,19 @@ class MainWindow(QMainWindow):
         self.project.set_submission(item)
         self.text_edit.setText(self.project.get_submission_code())
         self.note_dock.set_note(self.project.get_submission_note())
+
+    def open_rubric(self):
+        """Opens a file directory dialog to get rubric json"""
+        fdir = QFileDialog.getOpenFileName(
+            self, 'Select rubric JSON', os.getenv('HOME'),
+            'JSON (*.json)'
+        )
+        fname = fdir[0]
+        if fname != '':
+            self.project.load_rubric(fname)
+            # self.verdict_dock.load_rubric(self.project.get_parsed_rubric())
+
+        self.statusBar().showMessage('Rubric loaded from '+ fname)
 
     # UTILITY FUNCTIONS
     def call_message_box(

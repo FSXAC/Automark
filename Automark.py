@@ -240,4 +240,5 @@ class MainWindow(QMainWindow):
 # Run the app
 app = QApplication(sys.argv)
 window = MainWindow()
+window.setWindowIcon(QIcon('./res/tag.png'))
 sys.exit(app.exec_())

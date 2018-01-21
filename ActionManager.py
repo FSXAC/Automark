@@ -60,7 +60,7 @@ class ActionManager():
         self.act_view_verdict = self.create_action('Verdict', checkable=True, checked=True)
 
         # Compilation actions
-        self.act_compile_run = self.create_action(ACT_COMPILE_RUN)
+        self.act_compile_run = self.create_action(ACT_COMPILE_RUN, shortcut='Ctrl+R')
 
         # Marking actions
         self.act_mark_load_rubric = self.create_action(ACT_MARK_LOAD_RUBRIC)

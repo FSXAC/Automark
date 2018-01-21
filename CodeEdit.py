@@ -21,10 +21,10 @@ class CodeEdit(QTextEdit):
         self.setPalette(palette)
 
         font = QFont()
-        font.setFamily('Courier')
+        font.setFamily('Consolas')
         font.setStyleHint(QFont.Monospace)
         font.setFixedPitch(True)
-        font.setPointSize(11)
+        font.setPointSize(10)
         self.setFont(font)
 
         # Set tab spacing to another value
@@ -35,4 +35,5 @@ class CodeEdit(QTextEdit):
         self.setLineWrapMode(QTextEdit.NoWrap)
 
         # Set as readonly
+        # TODO: Make savable and recompilable
         self.setReadOnly(True)

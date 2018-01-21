@@ -48,7 +48,7 @@ class Highlighter(QSyntaxHighlighter):
         type_patterns = [
             '\\bchar\\b', '\\bint\\b', '\\blong\\b', '\\bshort\\b',
             '\\bsigned\\b', '\\bunsigned\\b', '\\bvoid\\b',
-            '\\bstruct\\b', '\\btypedef\\b'
+            '\\bstruct\\b', '\\btypedef\\b', '\\bdouble\\b', '\\bfloat\\b'
         ]
         self.add_patterns(type_patterns, type_format)
 

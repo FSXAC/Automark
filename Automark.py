@@ -162,7 +162,10 @@ class MainWindow(QMainWindow):
         """Run menu hander"""
         signal = sender.text()
         if signal == ACT_COMPILE_RUN:
-            self.project.compile_and_run()
+            run_output = self.project.compile_and_run()
+            if run_output != '':
+                self.note_dock.set_note(run_output)
+                self.statusBar().showMessage('Error compiling ' + str(self.project.get_current_submission_id()))
 
     def marking_menu_handler(self, sender):
         """Marking menu handler"""

@@ -77,7 +77,7 @@ class Project():
             info = note.read()
             note.close()
         except Exception as file_io_exception:
-            print(file_io_exception)
+            print('[Project]', file_io_exception)
 
         return info
 
@@ -86,14 +86,27 @@ class Project():
         try:
             source = (self.rootdir + '/' + self.current_id + '.c').replace('/', '\\')
             out = (self.rootdir + '/' + self.current_id + '.exe').replace('/', '\\')
-            command = 'gcc ' + source + ' -o ' + out
-            subprocess.run(command)
-            subprocess.call('start ' + out, shell=True)
 
-            # Delete the exe file
-            os.remove(out)
+            # Call compiler
+            process = subprocess.Popen(
+                ['gcc', source, '-o', out],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            output, err = process.communicate()
+
+            if err == b'':
+                subprocess.call('start ' + out, shell=True)
+            else:
+                # This is when there's a compilation error
+                print('bbq')
+                return err.decode("utf-8")
+
         except Exception as compile_exception:
-            print(compile_exception)
+            print('[Project]', compile_exception)
+
+        return ''
 
     def load_rubric(self, fname):
         """Assign the rubric structure"""
@@ -109,3 +122,7 @@ class Project():
     def get_parsed_rubric(self):
         """Returns the JSON parsed rubric"""
         return self.rubric
+
+    def get_current_submission_id(self):
+        """Returns CSID"""
+        return self.current_id

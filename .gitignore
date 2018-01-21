@@ -1,5 +1,8 @@
 *.pyc
+*.spec
 Tutorials/
 temp/
 __pycache__/
+build/
+dist/
 .vscode/

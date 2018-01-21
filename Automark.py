@@ -19,7 +19,7 @@ from Docked import *
 from Project import *
 
 # Global constants
-VERSION_NO = 'v0.3'
+VERSION_NO = 'v0.4'
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -166,6 +166,8 @@ class MainWindow(QMainWindow):
             if run_output != '':
                 self.note_dock.set_note(run_output)
                 self.statusBar().showMessage('Error compiling ' + str(self.project.get_current_submission_id()))
+            else:
+                self.summary_dock.read_selected()
 
     def marking_menu_handler(self, sender):
         """Marking menu handler"""

@@ -63,6 +63,10 @@ class SummaryDock(CustomDock):
 
         self.summary_tree_view.selected.connect(handler)
 
+    def read_selected(self):
+        """Change the state of the submissions in the summary view"""
+        self.summary_tree_view.set_status('Done')
+
 class SubmissionDock(CustomDock):
     def __init__(self, parent):
         super().__init__(parent)

@@ -89,7 +89,7 @@ class Project():
 
             # Call compiler
             process = subprocess.Popen(
-                ['gcc', source, '-o', out],
+                ['gcc', source, '-w', '-o', out],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE
@@ -100,7 +100,6 @@ class Project():
                 subprocess.call('start ' + out, shell=True)
             else:
                 # This is when there's a compilation error
-                print('bbq')
                 return err.decode("utf-8")
 
         except Exception as compile_exception:

@@ -44,3 +44,7 @@ class SummaryTree(QTreeView):
         self.reset_model()
         for submission in submissions:
             self.add_entry(submission, 'Unmarked')
+
+    def set_status(self, new_status):
+        index = self.currentIndex().row()
+        self.model().setData(self.model().index(index, self.STATUS), new_status)

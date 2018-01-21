@@ -65,6 +65,7 @@ class Highlighter(QSyntaxHighlighter):
         # Single line comments
         single_comment_format = QTextCharFormat()
         single_comment_format.setForeground(Qt.gray)
+        single_comment_format.setFontItalic(True)
         self.add_patterns(['\/\/[^\n]*'], single_comment_format)
     
     def highlightBlock(self, text):

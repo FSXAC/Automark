@@ -2,14 +2,10 @@
 Main text editor docked window
 """
 
-import sys
-import os
-import subprocess
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, pyqtSignal
-from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
-from PyQt5.QtGui import QSyntaxHighlighter, QTextCharFormat, QPalette, QColor
-from PyQt5.QtCore import QRegularExpression
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QFontMetrics
+from PyQt5.QtGui import QPalette, QColor
 
 class CodeEdit(QTextEdit):
     def __init__(self):
@@ -25,7 +21,18 @@ class CodeEdit(QTextEdit):
         self.setPalette(palette)
 
         font = QFont()
-        font.setFamily('Consolas')
+        font.setFamily('Courier')
+        font.setStyleHint(QFont.Monospace)
         font.setFixedPitch(True)
-        font.setPointSize(12)
+        font.setPointSize(11)
         self.setFont(font)
+
+        # Set tab spacing to another value
+        font_metrics = QFontMetrics(font)
+        self.setTabStopWidth(4 * font_metrics.width(' '))
+
+        # Line wrapping
+        self.setLineWrapMode(QTextEdit.NoWrap)
+
+        # Set as readonly
+        self.setReadOnly(True)

@@ -64,6 +64,10 @@ class Project():
 
         return code
 
+    def get_submission_info(self):
+        """Returns details about the submission"""
+        
+
     def get_submission_note(self):
         """Returns the note / info.txt of the submission"""
         note_filename = self.rootdir + '/' + self.current_id + '.txt'

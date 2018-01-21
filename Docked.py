@@ -113,6 +113,7 @@ class SubmissionDock(CustomDock):
         self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
 
 class NoteDock(CustomDock):
+    """Dock that shows a textbox of info.txt"""
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -131,7 +132,7 @@ class NoteDock(CustomDock):
         layout.addWidget(self.text_edit)
         self.dock.setWidget(self.content)
         self.dock.setWindowTitle('Notes')
-    
+
     def add_to_parent(self):
         """Add current docked window to main window"""
         self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
@@ -142,8 +143,10 @@ class NoteDock(CustomDock):
 
 
 class VerdictDock(CustomDock):
+    """Docking class widget for entering marks"""
     def __init__(self, parent):
         super().__init__(parent)
+        self.rubric = None
 
     def setupUi(self):
         """Setup UI"""
@@ -172,24 +175,54 @@ class VerdictDock(CustomDock):
         # Add to window
         self.dock.setWidget(self.content)
         self.dock.setWindowTitle('Verdict')
-    
+
     def add_to_parent(self):
         """Add the current docked widget to the main window"""
         self.parent.addDockWidget(Qt.RightDockWidgetArea, self.dock)
 
     def clear_rubric(self):
         """Clears all the widget in the verdict"""
-        for i in reversed(range(self.layout.count())):
-            self.layout.itemAt(i).widget().deleteLater()
+        while self.layout.count():
+            child = self.layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
 
-    def load_rubric(self, rubric_file):
-        """Loads a rubric template from JSON"""
-
-        
-
-
+    def load_rubric(self, rubric):
+        """Loads a rubric template from JSON parsed obj"""
+        self.rubric = rubric
         self.clear_rubric()
 
+        index = 0
 
+        # Label will act as a key
+        labels = {}
+        sliders = {}
+        values = {}
+        for criteria, markings in rubric.items():
+            label = QLabel(self.content)
+            label.setText(criteria)
+            slider = QSlider(self.content)
+            slider.setMinimum(0)
+            slider.setMaximum(len(markings) - 1)
+            slider.setOrientation(Qt.Horizontal)
+            slider.setTickPosition(QSlider.TicksBelow)
+            value = QLabel(self.content)
+            value.setText('0')
 
+            # Add to grid
+            self.layout.addWidget(label, index, 0, 1, 1)
+            self.layout.addWidget(slider, index, 1, 1, 1)
+            self.layout.addWidget(value, index, 2, 1, 1)
 
+            # Make reference via dictionary
+            labels[index] = label
+            sliders[index] = slider
+            values[index] = value
+
+            # Increment grid index
+            index = index + 1
+
+        for i in range(len(rubric.items())):
+            sliders[i].valueChanged.connect(
+                lambda x, i=i: values[i].setText(str(self.rubric[labels[i].text()][x]))
+            )

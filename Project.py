@@ -101,4 +101,7 @@ class Project():
             print(file_io_exception)
 
         self.rubric = json.loads(rubric)
-        print(self.rubric)
+
+    def get_parsed_rubric(self):
+        """Returns the JSON parsed rubric"""
+        return self.rubric

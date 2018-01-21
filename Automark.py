@@ -217,7 +217,7 @@ class MainWindow(QMainWindow):
         fname = fdir[0]
         if fname != '':
             self.project.load_rubric(fname)
-            # self.verdict_dock.load_rubric(self.project.get_parsed_rubric())
+            self.verdict_dock.load_rubric(self.project.get_parsed_rubric())
 
         self.statusBar().showMessage('Rubric loaded from '+ fname)
 

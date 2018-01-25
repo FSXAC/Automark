@@ -24,8 +24,16 @@ VERSION_NO = 'v0.4'
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi()
 
+        # Check requirements
+        if not self.check_requirements():
+            self.call_message_box(
+                txt='Missing gcc compiler',
+                info='Please install gcc and make sure it is in system PATH',
+                title='Missing gcc'
+            )
+
+        self.setupUi()
         self.project = Project()
 
     def setupUi(self):
@@ -227,6 +235,23 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('Rubric loaded from '+ fname)
 
     # UTILITY FUNCTIONS
+    def check_requirements(self):
+        """Returns true when all the requirements are met"""
+        try:
+            # Check compiler
+            process = subprocess.Popen(
+                ['gccw'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+            process.communicate()
+        except FileNotFoundError as no_gcc_exception:
+            print(no_gcc_exception)
+            return False
+
+        return True
+
     def call_message_box(
             self,
             txt='Warning',

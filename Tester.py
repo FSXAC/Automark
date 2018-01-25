@@ -9,11 +9,13 @@ WRITE_INFO = False
 TESTDIR = './Tests/'
 DELETE_FILES = True
 SUMMARY = True
-LETTERS = 'abcdefghijklmnnopqrstuvwxyz'
-N = 3
+# LETTERS = 'abcdefghijklmnnopqrstuvwxyz'
+LETTERS = 'xyz'
+N = 20
 
 def generateID():
-    return str(random.randint(10000000, 99999999))
+    # return str(random.randint(10000000, 99999999))
+    return '12345678'
 
 def generateCSID():
     csid = ''
@@ -21,21 +23,23 @@ def generateCSID():
         if j % 2 == 0:
             csid += random.choice(LETTERS)
         else:
-            csid += str(random.randint(0, 9))
-    return csid
+            csid += str(random.randint(0, 2))
+    return 'student_' + csid
 
 def generateName():
-    firstName = random.choice(
-        ['Abi', 'Braden', 'Cindy', 'David', 'Eleven', 'Finn',
-        'Greg', 'Hillary', 'Ivy', 'Jacob', 'Kyle', 'Liam', 'Michael',
-        'Noah', 'Opera', 'Pearl', 'Qing', 'Reese', 'Stanley', 'Thomas',
-        'Victor', 'Wang', 'Xing', 'Yorkie', 'Zhang']
-    )
+    firstName = random.choice([
+        # 'Abi', 'Braden', 'Cindy', 'David', 'Eleven', 'Finn',
+        # 'Greg', 'Hillary', 'Ivy', 'Jacob', 'Kyle', 'Liam', 'Michael',
+        # 'Noah', 'Opera', 'Pearl', 'Qing', 'Reese', 'Stanley', 'Thomas',
+        # 'Victor', 'Wang', 'Xing', 'Yorkie', 'Zhang'
+        'Derek'
+    ])
     lastName = random.choice([
-        'Alexander', 'Bitcon', 'Conbace', 'Deng', 'Feng', 'Genning', 'Henning',
-        'Irving', 'Jackson', 'Koerner', 'Lincoln', 'Moira', 'Nassal', 'Olafmeister',
-        'Pawleski', 'Quan', 'Romeo', 'Sombra', 'Tokyo', 'Unibaba', 'Volkov', 'Wang',
-        'Xuan', 'Yaun', 'Zhang'
+        # 'Alexander', 'Bitcon', 'Conbace', 'Deng', 'Feng', 'Genning', 'Henning',
+        # 'Irving', 'Jackson', 'Koerner', 'Lincoln', 'Moira', 'Nassal', 'Olafmeister',
+        # 'Pawleski', 'Quan', 'Romeo', 'Sombra', 'Tokyo', 'Unibaba', 'Volkov', 'Wang',
+        # 'Xuan', 'Yaun', 'Zhang'
+        'Bitcoin'
     ])
     return firstName + ' ' + lastName
 

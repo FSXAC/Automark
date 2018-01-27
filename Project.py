@@ -81,6 +81,16 @@ class Project():
 
         return info
 
+    def clean_dir(self):
+        """Deletes all the binaries in the active directory"""
+        try:
+            for file in os.listdir(self.rootdir):
+                if file.endswith('.exe'):
+                    os.remove(os.path.join(self.rootdir, file))
+        except Exception as delete_exception:
+            print('[Project]', delete_exception)
+
+
     def compile_and_run(self):
         """Try to compile the current file"""
         try:
@@ -106,6 +116,25 @@ class Project():
             print('[Project]', compile_exception)
 
         return ''
+
+    def compile_all(self):
+        """Compiles all the C files in the directory"""
+        # Clean the directory first
+        self.clean_dir()
+
+        # Compile all
+        try:
+            for submission in os.listdir(self.rootdir):
+                fname, fext = os.path.splitext(submission)
+                if fext == '.c':
+                    source = (self.rootdir + '/' + fname + '.c').replace('/', '\\')
+                    out = source.replace('.c', '.exe')
+
+                    # Call compiler
+                    process = subprocess.Popen(['gcc', source, '-w', '-o', out], shell=True)
+                    process.communicate()
+        except Exception as compile_exception:
+            print('[Project]', compile_exception)
 
     def load_rubric(self, fname):
         """Assign the rubric structure"""

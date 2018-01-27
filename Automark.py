@@ -173,9 +173,12 @@ class MainWindow(QMainWindow):
             run_output = self.project.compile_and_run()
             if run_output != '':
                 self.note_dock.set_note(run_output)
-                self.statusBar().showMessage('Error compiling ' + str(self.project.get_current_submission_id()))
+                self.statusBar().showMessage(
+                    'Error compiling ' + str(self.project.get_current_submission_id()))
             else:
                 self.summary_dock.read_selected()
+        elif signal == ACT_COMPILE_ALL:
+            self.project.compile_all()
 
     def marking_menu_handler(self, sender):
         """Marking menu handler"""
@@ -240,7 +243,7 @@ class MainWindow(QMainWindow):
         try:
             # Check compiler
             process = subprocess.Popen(
-                ['gccw'],
+                ['gcc'],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE

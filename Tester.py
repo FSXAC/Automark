@@ -10,7 +10,7 @@ TESTDIR = './Tests/'
 DELETE_FILES = True
 SUMMARY = True
 # LETTERS = 'abcdefghijklmnnopqrstuvwxyz'
-LETTERS = 'xyz'
+LETTERS = 'x'
 N = 20
 
 def generateID():
@@ -23,7 +23,7 @@ def generateCSID():
         if j % 2 == 0:
             csid += random.choice(LETTERS)
         else:
-            csid += str(random.randint(0, 2))
+            csid += str(random.randint(0, 9))
     return 'student_' + csid
 
 def generateName():

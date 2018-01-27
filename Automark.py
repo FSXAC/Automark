@@ -168,17 +168,39 @@ class MainWindow(QMainWindow):
 
     def run_menu_handler(self, sender):
         """Run menu hander"""
+        # Don't do anything if no folder is opened
+        if self.project.rootdir == '':
+            self.call_message_box(
+                txt='Cannot do this right now',
+                info='Please open a folder containing all the submissions first',
+                title='No submissions'
+            )
+            return
+        
+        # If folder is valid
         signal = sender.text()
         if signal == ACT_COMPILE_RUN:
             run_output = self.project.compile_and_run()
             if run_output != '':
                 self.note_dock.set_note(run_output)
                 self.statusBar().showMessage(
-                    'Error compiling ' + str(self.project.get_current_submission_id()))
+                    'Error compiling ' + str(self.project.get_current_submission_id())
+                )
             else:
                 self.summary_dock.read_selected()
+                self.statusBar().showMessage(
+                    'Running ' + str(self.project.get_current_submission_id())
+                )
         elif signal == ACT_COMPILE_ALL:
             self.project.compile_all()
+            self.statusBar().showMessage(
+                'Compiled all compilable submissions in ' + self.project.rootdir
+            )
+        elif signal == ACT_COMPILE_CLEAN:
+            self.project.clean_dir()
+            self.statusBar().showMessage(
+                'Cleared all .exe from ' + self.project.rootdir
+            )
 
     def marking_menu_handler(self, sender):
         """Marking menu handler"""

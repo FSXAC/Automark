@@ -15,6 +15,7 @@ ACT_VIEW_SUBMISSION = 'Submission'
 ACT_VIEW_NOTE = 'Note'
 ACT_VIEW_VERDICT = 'Verdict'
 
+ACT_COMPILE_CLEAN = 'Clean'
 ACT_COMPILE_RUN = 'Run'
 ACT_COMPILE_ALL = 'Compile All'
 
@@ -61,6 +62,7 @@ class ActionManager():
         self.act_view_verdict = self.create_action('Verdict', checkable=True, checked=True)
 
         # Compilation actions
+        self.act_compile_clean = self.create_action(ACT_COMPILE_CLEAN, shortcut='Ctrl+0')
         self.act_compile_run = self.create_action(ACT_COMPILE_RUN, shortcut='Ctrl+R')
         self.act_compile_all = self.create_action(ACT_COMPILE_ALL, shortcut='Ctrl+Shift+R')
 
@@ -89,6 +91,7 @@ class ActionManager():
     def get_run_actions(self):
         """Returns a set of actions that needs to be populated in the Run menu"""
         return_list = [
+            self.act_compile_clean,
             self.act_compile_all,
             self.act_compile_run
         ]

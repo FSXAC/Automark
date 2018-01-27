@@ -176,7 +176,7 @@ class MainWindow(QMainWindow):
                 title='No submissions'
             )
             return
-        
+
         # If folder is valid
         signal = sender.text()
         if signal == ACT_COMPILE_RUN:
@@ -196,6 +196,7 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(
                 'Compiled all compilable submissions in ' + self.project.rootdir
             )
+
         elif signal == ACT_COMPILE_CLEAN:
             self.project.clean_dir()
             self.statusBar().showMessage(

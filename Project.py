@@ -5,6 +5,7 @@ Project wrapper
 import os
 import subprocess
 import json
+from threading import Thread
 
 PROJ_EMPTY_PATH = 'emptypath'
 PROJ_EMPTY_DIR = 'emptydir'
@@ -117,8 +118,19 @@ class Project():
 
         return ''
 
-    def compile_all(self):
+    def compile_all(self, progress_bar):
         """Compiles all the C files in the directory"""
+        # Compiler help function
+        def compile_submission(fname):
+            """Compiles a single file given a file name"""
+            source = (self.rootdir + '/' + fname + '.c').replace('/', '\\')
+            out = source.replace('.c', '.exe')
+
+            # Call compiler
+            process = subprocess.Popen(
+                ['gcc', source, '-w', '-o', out], shell=True)
+            process.communicate()
+
         # Clean the directory first
         self.clean_dir()
 
@@ -127,12 +139,11 @@ class Project():
             for submission in os.listdir(self.rootdir):
                 fname, fext = os.path.splitext(submission)
                 if fext == '.c':
-                    source = (self.rootdir + '/' + fname + '.c').replace('/', '\\')
-                    out = source.replace('.c', '.exe')
-
-                    # Call compiler
-                    process = subprocess.Popen(['gcc', source, '-w', '-o', out], shell=True)
-                    process.communicate()
+                    compile_thread = Thread(
+                        target=compile_submission,
+                        args=(fname, )
+                    )
+                    compile_thread.start()
         except Exception as compile_exception:
             print('[Project]', compile_exception)
 

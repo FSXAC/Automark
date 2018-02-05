@@ -49,6 +49,7 @@ class MainWindow(QMainWindow):
 
         # Set central widget to textedit with highlighter
         self.text_edit = CodeEdit()
+        self.text_edit.set_text_changed_handler(self.document_changed_handler)
         self.highlighter = Highlighter(self.text_edit.document())
         self.setCentralWidget(self.text_edit)
 
@@ -148,8 +149,14 @@ class MainWindow(QMainWindow):
         """Handles events from the file menu and its corresponding actions"""
         signal = sender.text()
         if signal == ACT_OPEN_FOLDER:
-            # print('Open folder')
             self.open_folder()
+        elif signal == ACT_FILE_SAVE:
+            if self.project.document_changed:
+                self.project.document_changed = False
+                self.project.save_current_document(self.text_edit.toPlainText())
+                self.statusBar.showMessage('Saved changes to submission ' + self.project.get_current_submission_id())
+            else:
+                print("Nothing worth saving")
         elif signal == ACT_QUIT:
             qApp.quit()
 
@@ -244,8 +251,16 @@ class MainWindow(QMainWindow):
     def select_submission_handler(self, item):
         """Handler for when a submission in the summary dock is clicked"""
         self.project.set_submission(item)
+        self.project.doucment_changed = False   # TODO: add dialog box to say if user wish to save changes
+        self.text_edit.blockSignals(True)
         self.text_edit.setText(self.project.get_submission_code())
+        self.text_edit.blockSignals(False)
         self.note_dock.set_note(self.project.get_submission_note())
+
+    def document_changed_handler(self):
+        """Handler for when a document is edited"""
+        self.project.document_changed = True
+        self.statusBar().showMessage('Unsaved changes for submission ' + self.project.get_current_submission_id())
 
     def open_rubric(self):
         """Opens a file directory dialog to get rubric json"""

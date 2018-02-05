@@ -36,4 +36,8 @@ class CodeEdit(QTextEdit):
 
         # Set as readonly
         # TODO: Make savable and recompilable
-        self.setReadOnly(True)
+        # self.setReadOnly(True)
+
+    def set_text_changed_handler(self, handler):
+        """Configures what happens when the text in the editor changes"""
+        self.textChanged.connect(handler)

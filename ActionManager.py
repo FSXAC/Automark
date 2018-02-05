@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon, QFont, QStandardItem, QStandardItemModel
 
 # Constants
 ACT_OPEN_FOLDER = '&Open Folder'
+ACT_FILE_SAVE = 'Save File'
 ACT_QUIT = '&Quit'
 
 ACT_VIEW_SUMMARY = 'Summary'
@@ -20,6 +21,7 @@ ACT_COMPILE_RUN = 'Run'
 ACT_COMPILE_ALL = 'Compile All'
 
 ACT_MARK_LOAD_RUBRIC = 'Load Rubric'
+
 
 class ActionManager():
     def __init__(self, parent):
@@ -53,6 +55,7 @@ class ActionManager():
 
         # File actions
         self.act_open_folder = self.create_action(ACT_OPEN_FOLDER, icon='hi.png', shortcut='Ctrl+O')
+        self.act_save_document = self.create_action(ACT_FILE_SAVE, shortcut='Ctrl+S')
         self.act_quit = self.create_action(ACT_QUIT, shortcut='Ctrl+Q')
 
         # View actions
@@ -69,10 +72,12 @@ class ActionManager():
         # Marking actions
         self.act_mark_load_rubric = self.create_action(ACT_MARK_LOAD_RUBRIC)
 
+
     def get_file_actions(self):
         """Returns a set of actions that needs to be populated in the File menu"""
         return_list = [
             self.act_open_folder,
+            self.act_save_document,
             '/',
             self.act_quit
         ]

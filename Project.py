@@ -6,6 +6,7 @@ import os
 import subprocess
 import json
 from threading import Thread
+from shutil import copyfile
 
 PROJ_EMPTY_PATH = 'emptypath'
 PROJ_EMPTY_DIR = 'emptydir'
@@ -18,6 +19,9 @@ class Project():
         self.current_id = ''
         self.rubric_file = ''
         self.rubric = {}
+
+        # Keep track of which document changed
+        self.document_changed = False
 
     def new_project(self, rootdir):
         """Validates the directory"""
@@ -86,7 +90,7 @@ class Project():
         """Deletes all the binaries in the active directory"""
         try:
             for file in os.listdir(self.rootdir):
-                if file.endswith('.exe'):
+                if file.endswith('.exe') or file.endswith('.OLD'):
                     os.remove(os.path.join(self.rootdir, file))
         except Exception as delete_exception:
             print('[Project]', delete_exception)
@@ -165,3 +169,25 @@ class Project():
     def get_current_submission_id(self):
         """Returns CSID"""
         return self.current_id
+
+    def save_current_document(self, new_code):
+        """Create a copy of the orignal and save the made changes"""
+        # TODO: make a button that reverts to original
+
+        if self.rootdir == '' or self.current_id == '':
+            print("[Project] Error in save current document: not suppose to happen")
+            return
+        
+        # Make a copy of the original
+        fname = self.rootdir + '/' + self.current_id + '.c'
+        copyfile(fname, fname + '.OLD')
+
+        # Save to original file
+        try:
+            with open(fname, 'w') as f:
+                f.write(new_code)
+        except Exception as file_io_exception:
+            print(file_io_exception)
+
+        # Set document changed state to falase
+        self.document_changed = False

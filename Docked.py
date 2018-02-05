@@ -37,15 +37,15 @@ class SummaryDock(CustomDock):
         super().__init__(parent)
 
     def setupUi(self):
-        cd_label = QLabel(self.content)
-        cd_label.setText('Current Directory')
-        cd_url = QLineEdit(self.content)
-        cd_url.setReadOnly(True)
-        cd_container = QHBoxLayout()
-        cd_container.addWidget(cd_label)
-        cd_container.addWidget(cd_url)
+        # cd_label = QLabel(self.content)
+        # cd_label.setText('Current Directory')
+        # cd_url = QLineEdit(self.content)
+        # cd_url.setReadOnly(True)
+        # cd_container = QHBoxLayout()
+        # cd_container.addWidget(cd_label)
+        # cd_container.addWidget(cd_url)
         v_layout = QVBoxLayout(self.content)
-        v_layout.addLayout(cd_container)
+        # v_layout.addLayout(cd_container)
 
         self.summary_tree_view = SummaryTree()
         v_layout.addWidget(self.summary_tree_view)
@@ -66,6 +66,10 @@ class SummaryDock(CustomDock):
     def read_selected(self):
         """Change the state of the submissions in the summary view"""
         self.summary_tree_view.set_status('Done')
+
+    def change_selected(self):
+        """Change the state of the submission in teh sumamry view to changed"""
+        self.summary_tree_view.set_status('Modified')
 
 class SubmissionDock(CustomDock):
     def __init__(self, parent):

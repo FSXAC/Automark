@@ -19,7 +19,7 @@ from Docked import *
 from Project import *
 
 # Global constants
-VERSION_NO = 'v0.4'
+VERSION_NO = 'v0.5'
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -154,7 +154,7 @@ class MainWindow(QMainWindow):
             if self.project.document_changed:
                 self.project.document_changed = False
                 self.project.save_current_document(self.text_edit.toPlainText())
-                self.statusBar.showMessage('Saved changes to submission ' + self.project.get_current_submission_id())
+                self.statusBar().showMessage('Saved changes to submission ' + self.project.get_current_submission_id())
             else:
                 print("Nothing worth saving")
         elif signal == ACT_QUIT:
@@ -187,6 +187,11 @@ class MainWindow(QMainWindow):
         # If folder is valid
         signal = sender.text()
         if signal == ACT_COMPILE_RUN:
+            # Try save the file first if it's changed
+            if self.project.document_changed:
+                self.project.save_current_document(self.text_edit.toPlainText())
+            
+            # Run compile method
             run_output = self.project.compile_and_run()
             if run_output != '':
                 self.note_dock.set_note(run_output)
@@ -196,7 +201,7 @@ class MainWindow(QMainWindow):
             else:
                 self.summary_dock.read_selected()
                 self.statusBar().showMessage(
-                    'Running ' + str(self.project.get_current_submission_id())
+                    'Compile successful; now running submission ' + str(self.project.get_current_submission_id())
                 )
         elif signal == ACT_COMPILE_ALL:
             self.project.compile_all()
@@ -209,6 +214,10 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(
                 'Cleared all .exe from ' + self.project.rootdir
             )
+
+            # Reload the summaries
+            self.summary_dock.summary_tree_view.load_submissions(
+                self.project.get_submissions())
 
     def marking_menu_handler(self, sender):
         """Marking menu handler"""

@@ -68,6 +68,7 @@ class ActionManager():
         self.act_compile_clean = self.create_action(ACT_COMPILE_CLEAN, shortcut='Ctrl+0')
         self.act_compile_run = self.create_action(ACT_COMPILE_RUN, shortcut='Ctrl+R')
         self.act_compile_all = self.create_action(ACT_COMPILE_ALL, shortcut='Ctrl+Shift+R')
+        self.act_compile_all.setEnabled(False)  #TODO: WIP
 
         # Marking actions
         self.act_mark_load_rubric = self.create_action(ACT_MARK_LOAD_RUBRIC)

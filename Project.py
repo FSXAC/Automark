@@ -122,7 +122,7 @@ class Project():
 
         return ''
 
-    def compile_all(self, progress_bar):
+    def compile_all(self):
         """Compiles all the C files in the directory"""
         # Compiler help function
         def compile_submission(fname):
